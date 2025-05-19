@@ -1,0 +1,57 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html{
+    font-size: 100%;
+  }
+  
+  body{
+      font-weight: 400;
+      background-color: #F8F9FA;
+      font-family: Montserrat, 'Times New Roman', Arial;
+      width: 100%;
+      font-size: 12px;
+      overflow-x: hidden;
+  }
+
+.navbar{
+    background: #3170B6;
+    font-size: 1.5em;
+    font-weight: 600;
+    border-bottom: 2px solid black;
+  }
+
+  form{
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .editProductLink
+  {
+    text-decoration: none;
+  }
+
+#tp_table_info {
+  background: #3170B6;
+}
+
+.subject {
+  font-weight: bold;
+}
+
+.attachment_link {
+  text-decoration: none;
+  --bs-icon-link-transform: translate3d(0, -.125rem, 0);
+}
+
+.login-user-page, .register-user-page {
+  background: #3170B6;
+}
+
+.login-button-tooltip, .register-button-tooltip, .logout-button-tooltip {
+  --bs-tooltip-bg: #343a40;
+}
