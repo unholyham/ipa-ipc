@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('proposals', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->unsignedBigInteger('ownerId');
             $table->string('projectTitle');
@@ -33,10 +33,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('proposals', function (Blueprint $table) {
             $table->dropForeign(['ownerId']); // Drop the foreign key first
             $table->dropColumn('ownerId');       // Then drop the column
         });
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('proposals');
     }
 };

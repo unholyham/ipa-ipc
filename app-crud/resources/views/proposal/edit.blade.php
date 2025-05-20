@@ -20,7 +20,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
     <div class="d-flex align-items-center">
-      <a class="navbar-brand" href="{{route('product.index')}}">
+      <a class="navbar-brand" href="{{route('proposal.index')}}">
         <img src="/images/SSB_Logo.jpg" alt="Your Logo" height="70">
       </a>
     </div>
@@ -34,12 +34,12 @@
                         VENDORS
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="vendorsDropdown">
-                        <li><a class="dropdown-item" href="{{route('product.index')}}">Technical Proposal Submissions</a></li>
+                        <li><a class="dropdown-item" href="{{route('proposal.index')}}">Technical Proposal Submissions</a></li>
                         <li><a class="dropdown-item" href="{{route('profile.view')}}">Profile</a></li>
                     </ul>
                 </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{route('product.create')}}">SUBMIT PROPOSAL</a>
+          <a class="nav-link" href="{{route('proposal.create')}}">SUBMIT PROPOSAL</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">WHAT WE DO</a>
@@ -56,37 +56,37 @@
   <h1 class="text-center mt-4">Technical Proposal Details</h1>
   <div class="row border-top border-start border-end p-1 text-white mt-4" id="tp_table_info">
     <div class="col-md-3"><h6 class="subject">Project Title</h6></div>
-    <div class="col-md-3"><h6>{{$product->projectTitle}}</h6></div>
+    <div class="col-md-3"><h6>{{$proposal->projectTitle}}</h6></div>
   </div>
   <div class="row border-top border-start border-end p-1">
     <div class="col-md-3"><h6 class="subject">Project Number</h6></div>
-    <div class="col-md-3"><h6>{{$product->projectNumber}}</h6></div>
+    <div class="col-md-3"><h6>{{$proposal->projectNumber}}</h6></div>
   </div>
   <div class="row bg-light border-top border-start border-end p-1">
     <div class="col-md-3"><h6 class="subject">Region</h6></div>
-    <div class="col-md-3"><h6>{{$product->region}}</h6></div>
+    <div class="col-md-3"><h6>{{$proposal->region}}</h6></div>
   </div>
   <div class="row border-top border-start border-end p-1">
     <div class="col-md-3"><h6 class="subject">Prepared By</h6></div>
-    <div class="col-md-3"><h6>{{$product->preparedBy}}</h6></div>
+    <div class="col-md-3"><h6>{{$proposal->preparedBy}}</h6></div>
   </div>
   <div class="row bg-light border-top border-start border-end p-1">
     <div class="col-md-3"><h6 class="subject">Main Contractor</h6></div>
-    <div class="col-md-3"><h6>{{$product->mainContractor}}</h6></div>
+    <div class="col-md-3"><h6>{{$proposal->mainContractor}}</h6></div>
   </div>
   <div class="row border-top border-start border-end p-1">
     <div class="col-md-3"><h6 class="subject">Review Status</h6></div>
-    <div class="col-md-3"><h6>{{$product->reviewStatus}}</h6></div>
+    <div class="col-md-3"><h6>{{$proposal->reviewStatus}}</h6></div>
   </div>
   <div class="row bg-light border-top border-start border-end p-1">
     <div class="col-md-3"><h6 class="subject">Approved Status</h6></div>
-    <div class="col-md-3"><h6>{{$product->approvedStatus}}</h6></div>
+    <div class="col-md-3"><h6>{{$proposal->approvedStatus}}</h6></div>
   </div>
   <div class="row border p-1">
     <div class="col-md-3"><h6 class="subject">Uploaded Files</h6></div>
     <div class="col-md-3">
-      @if($product->pathToTP)
-        <a class="attachment_link icon-link icon-link-hover" href="{{route('product.pdf', ['product' => $product->id])}}" download="{{ basename($product->pathToTP) }}"><i class="bi bi-download"></i> Download Attachment</a>
+      @if($proposal->pathToTP)
+        <a class="attachment_link icon-link icon-link-hover" href="{{route('proposal.pdf', ['proposal' => $proposal->id])}}" download="{{ basename($proposal->pathToTP) }}"><i class="bi bi-download"></i> Download Attachment</a>
       @else
           Attachment not found.
       @endif  

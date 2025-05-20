@@ -36,8 +36,6 @@ class UserController extends Controller
             'role' => 'user'
         ]);
 
-        //Auth::login($user);
-
         return redirect()->route('login');
     }
 }

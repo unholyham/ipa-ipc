@@ -26,7 +26,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->has('remember'))) {
             $request->session()->regenerate();
-            return redirect()->route('product.index');
+            return redirect()->route('proposal.index');
         }
         return back()->withErrors(['email' => 'Invalid login credentials'])->withInput();
     }

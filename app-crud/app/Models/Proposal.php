@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class Product extends Model
+class Proposal extends Model
 {
     use HasFactory, HasUuids;
     protected $fillable = [

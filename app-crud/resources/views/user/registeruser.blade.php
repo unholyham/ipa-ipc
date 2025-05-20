@@ -20,7 +20,7 @@
     <div class="container">
         <div class="row mt-2">
         <div class="text-center">
-            <a class="navbar-brand" href="{{route('product.index')}}">
+            <a class="navbar-brand" href="{{route('proposal.index')}}">
                 <img src="/images/SSB_Logo.jpg" alt="Your Logo" height="70">
             </a>
         </div>

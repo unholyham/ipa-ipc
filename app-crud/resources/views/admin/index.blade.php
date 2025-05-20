@@ -20,7 +20,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
     <div class="d-flex align-items-center">
-      <a class="navbar-brand" href="{{route('product.index')}}">
+      <a class="navbar-brand" href="{{route('proposal.index')}}">
         <img src="/images/SSB_Logo.jpg" alt="Your Logo" height="70">
       </a>
     </div>
@@ -31,16 +31,13 @@
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle active" href="#" id="vendorsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        VENDORS
+                        SUBMISSIONS
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="vendorsDropdown">
-                        <li><a class="dropdown-item" href="{{route('product.index')}}">Technical Proposal Submissions</a></li>
+                        <li><a class="dropdown-item" href="{{route('proposal.index')}}">Technical Proposal Submissions</a></li>
                         <li><a class="dropdown-item" href="{{route('profile.view')}}">Profile</a></li>
                     </ul>
                 </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{route('product.create')}}">SUBMIT PROPOSAL</a>
-        </li>
         <li class="nav-item">
           <a class="nav-link" href="#">WHAT WE DO</a>
         </li>
@@ -88,17 +85,17 @@
             <th class="tableheader text-bg-warning">Approved Status</th>
             </tr>
           </thead>
-        @foreach($products as $product)
-        @if($product->approvedStatus != 'Approved')
+        @foreach($proposals as $proposal)
+        @if($proposal->approvedStatus != 'Approved')
             <tr>
-                <td><a href="{{route('product.edit', ['product' => $product])}}" class="editProductLink"><strong>{{$product->projectTitle}}</strong></a></td>
-                <td>{{$product->created_at->format('j F Y g:i a') }}</td>
-                <td>{{$product->projectNumber}}</td>
-                <td>{{$product->region}}</td>
-                <td>{{$product->preparedBy}}</td>
-                <td>{{$product->mainContractor}}</td>
-                <td>{{$product->reviewStatus}}</td>
-                <td>{{$product->approvedStatus}}</td>
+                <td><a href="{{route('proposal.edit', ['proposal' => $proposal])}}" class="editProposalLink"><strong>{{$proposal->projectTitle}}</strong></a></td>
+                <td>{{$proposal->created_at->format('j F Y g:i a') }}</td>
+                <td>{{$proposal->projectNumber}}</td>
+                <td>{{$proposal->region}}</td>
+                <td>{{$proposal->preparedBy}}</td>
+                <td>{{$proposal->mainContractor}}</td>
+                <td>{{$proposal->reviewStatus}}</td>
+                <td>{{$proposal->approvedStatus}}</td>
             </tr>
         @endif
         @endforeach
@@ -123,17 +120,17 @@
             <th class="tableheader text-bg-success">Approved Status</th>
             </tr>
           </thead>
-          @foreach($products as $product)
-        @if($product->approvedStatus == 'Approved')
+          @foreach($proposals as $proposal)
+        @if($proposal->approvedStatus == 'Approved')
             <tr>
-                <td><a href="{{route('product.edit', ['product' => $product])}}" class="editProductLink"><strong>{{$product->projectTitle}}</strong></a></td>
-                <td>{{$product->created_at->format('j F Y g:i a') }}</td>
-                <td>{{$product->projectNumber}}</td>
-                <td>{{$product->region}}</td>
-                <td>{{$product->preparedBy}}</td>
-                <td>{{$product->mainContractor}}</td>
-                <td>{{$product->reviewStatus}}</td>
-                <td>{{$product->approvedStatus}}</td>
+                <td><a href="{{route('proposal.edit', ['proposal' => $proposal])}}" class="editProposalLink"><strong>{{$proposal->projectTitle}}</strong></a></td>
+                <td>{{$proposal->created_at->format('j F Y g:i a') }}</td>
+                <td>{{$proposal->projectNumber}}</td>
+                <td>{{$proposal->region}}</td>
+                <td>{{$proposal->preparedBy}}</td>
+                <td>{{$proposal->mainContractor}}</td>
+                <td>{{$proposal->reviewStatus}}</td>
+                <td>{{$proposal->approvedStatus}}</td>
             </tr>
         @endif
         @endforeach

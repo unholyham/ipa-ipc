@@ -21,7 +21,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
     <div class="d-flex align-items-center">
-      <a class="navbar-brand" href="{{route('product.index')}}">
+      <a class="navbar-brand" href="{{route('proposal.index')}}">
         <img src="/images/SSB_Logo.jpg" alt="Your Logo" height="70">
       </a>
     </div>
@@ -35,12 +35,12 @@
                         VENDORS
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="vendorsDropdown">
-                        <li><a class="dropdown-item" href="{{route('product.index')}}">Technical Proposal Submissions</a></li>
+                        <li><a class="dropdown-item" href="{{route('proposal.index')}}">Technical Proposal Submissions</a></li>
                         <li><a class="dropdown-item" href="{{route('profile.view')}}">Profile</a></li>
                     </ul>
                 </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{route('product.create')}}">SUBMIT PROPOSAL</a>
+          <a class="nav-link" href="{{route('proposal.create')}}">SUBMIT PROPOSAL</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">WHAT WE DO</a>
