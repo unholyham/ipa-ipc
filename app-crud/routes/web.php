@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
@@ -12,13 +12,13 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/product', [ProductController::class, 'index'])->name('product.index');
-    Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
-    Route::post('/product', [ProductController::class, 'store'])->name('product.store');
-    Route::get('/product/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
-    Route::put('/product/{product}/update', [ProductController::class, 'update'])->name('product.update');
-    Route::delete('/product/{product}/destroy', [ProductController::class, 'destroy'])->name('product.destroy');
-    Route::get('/product/{product}/pdf', [ProductController::class, 'displayPdf'])->name('product.pdf');
+    Route::get('/proposal', [ProposalController::class, 'index'])->name('proposal.index');
+    Route::get('/proposal/create', [ProposalController::class, 'create'])->name('proposal.create');
+    Route::post('/proposal', [ProposalController::class, 'store'])->name('proposal.store');
+    Route::get('/proposal/{proposal}/edit', [ProposalController::class, 'edit'])->name('proposal.edit');
+    Route::put('/proposal/{proposal}/update', [ProposalController::class, 'update'])->name('proposal.update');
+    Route::delete('/proposal/{proposal}/destroy', [ProposalController::class, 'destroy'])->name('proposal.destroy');
+    Route::get('/proposal/{proposal}/pdf', [ProposalController::class, 'displayPdf'])->name('proposal.pdf');
 });
 
 Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
