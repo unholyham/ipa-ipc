@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->unsignedBigInteger('ownerId');
             $table->string('projectTitle');
             $table->string('projectNumber');
             $table->string('region');
@@ -22,6 +23,8 @@ return new class extends Migration
             $table->string('approvedStatus');
             $table->string('pathToTP');
             $table->timestamps();
+
+            $table->foreign('ownerId')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -30,6 +33,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropForeign(['ownerId']); // Drop the foreign key first
+            $table->dropColumn('ownerId');       // Then drop the column
+        });
         Schema::dropIfExists('products');
     }
 };

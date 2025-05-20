@@ -12,7 +12,13 @@ use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     public function index(){
-        $products = Product::all();
+        if (auth()->user()->role === 'admin') {
+            // If admin, fetch all products
+            $products = Product::all();
+        } else {
+            // If not admin, fetch only the user's products
+            $products = Product::where('ownerId', auth()->id())->get();
+        }
         return view('products.index', ['products' => $products]);
     }
 
@@ -39,12 +45,16 @@ class ProductController extends Controller
     $data = $validator->validated(); // Get the validated data
 
     $data['id'] = Str::uuid();
+    $data['ownerId'] = auth()->id();
     $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
     $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
 
     if ($request->hasFile('pathToTP')) {
         $file = $request->file('pathToTP');
-        $filename = $file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
+        $projectTitle = $data['projectTitle'];
+        $dateSubmitted = now()->format('Ymd');
+        $filename = $dateSubmitted . '_' . $projectTitle . '.' . $extension;
         $path = $file->storeAs('public/Technical_Proposal_Uploads', $filename);
         $data['pathToTP'] = $path;
     }

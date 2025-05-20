@@ -24,6 +24,10 @@
     border-bottom: 2px solid black;
   }
 
+  .profile_link {
+    text-decoration: none;
+  }
+
   form{
     max-width: 800px;
     margin-left: auto;

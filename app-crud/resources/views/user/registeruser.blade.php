@@ -29,7 +29,7 @@
             <div class="col-md-6">
                 <div class="card shadow-lg">
                     <div class="card-body">
-                        <h1 class="card-title text-center mb-4">Register</h1>
+                        <h1 class="card-title text-center mb-4">Register Account</h1>
 
                         @if ($errors->any())
                             <div class="alert alert-danger">
@@ -46,7 +46,7 @@
                             @csrf
 
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required autofocus placeholder="Name">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="Name">
                                 <label for="name">Company Name</label>
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -56,7 +56,7 @@
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required placeholder="Email">
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Email">
                                 <label for="email">Email</label>
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -66,7 +66,7 @@
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required placeholder="Password">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Password">
                                 <label for="password">Password</label>
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -76,7 +76,7 @@
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required placeholder="Confirm Password">
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password">
                                 <label for="password_confirmation">Confirm Password</label>
                             </div>
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Technical Proposal Form</title>
+    <title>Edit Profile</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="vendorsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle active" href="#" id="vendorsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         VENDORS
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="vendorsDropdown">
@@ -40,7 +40,7 @@
                     </ul>
                 </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{route('product.create')}}">SUBMIT PROPOSAL</a>
+          <a class="nav-link" href="{{route('product.create')}}">SUBMIT PROPOSAL</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">WHAT WE DO</a>
@@ -54,9 +54,10 @@
 </nav>
 
 <div class="container pt-2">
-    <h1 class="text-center mt-4">Technical Proposal Form</h1>
+    <h1 class="text-center mt-4">Edit Profile</h1>
     <div class="mt-4">
-        <form method="post" action="{{route('product.store')}}" enctype="multipart/form-data">
+        <form method="post" action="{{route('profile.update')}}" enctype="multipart/form-data">
+        @method('PUT')
         @csrf
         @if ($errors->any())
           <div class="alert alert-danger">
@@ -69,62 +70,27 @@
           </div>
         @endif
             <div class="form-floating mb-3">
-                <input type="text" class="form-control @error('projectTitle') is-invalid @enderror" name="projectTitle" placeholder="Project Title*" value="{{ old('projectTitle') }}" id="project_title">
-                <label for="project_title">Project Title*</label>
-                @error('projectTitle')
+                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Name" value="{{ $user->name }}" id="name">
+                <label for="name">Company Name</label>
+                @error('name')
                   <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                   </span>
                 @enderror
             </div>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control @error('projectNumber') is-invalid @enderror" name="projectNumber" placeholder="Project Number" value="{{ old('projectNumber') }}" id="project_number">
-                <label for="project_number">Project Number</label>
-                @error('projectNumber')
+                <input type="text" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email" value="{{ $user->email }}" id="email">
+                <label for="email">Email</label>
+                @error('email')
                   <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                   </span>
                 @enderror
             </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control @error('region') is-invalid @enderror" name="region" placeholder="Region*" value="{{ old('region') }}" id="project_region">
-                <label for="project_region">Region*</label>
-                @error('region')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                @enderror
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control @error('preparedBy') is-invalid @enderror" name="preparedBy" placeholder="Prepared By(Full Name as per IC)*" value="{{ old('preparedBy') }}" id="project_preparedBy">
-                <label for="project_preparedBy">Prepared By(Full Name as per IC)*</label>
-                @error('preparedBy')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                @enderror
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control @error('mainContractor') is-invalid @enderror" name="mainContractor" placeholder="Main Contractor Name*" value="{{ old('mainContractor') }}" id="project_mainContractor">
-                <label for="project_mainContractor">Main Contractor Name*</label>
-                @error('mainContractor')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                @enderror
-            </div>
-          <div>
-            <label for="#tpLabel">Technical Proposal Document*</label>
-            <input type="file" class="form-control" name="pathToTP" id="tpLabel">
-            <p>Max filesize: 20MB</p>
-          </div>
           <div class="mt-3">
             <button type="button" class="form-control bg-primary text-light" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
-                Submit
+                Save
             </button>
-          </div>
-          <div class="mb-1">
-            <input type="reset" class="form-control bg-light" value="Reset">
           </div>
           <div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -134,11 +100,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to submit this technical proposal?
+                        Are you sure you want to update your profile information?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="realSubmitButton">Submit Proposal</button>
+                        <button type="submit" class="btn btn-primary" id="realSubmitButton">Yes</button>
                     </div>
                 </div>
             </div>

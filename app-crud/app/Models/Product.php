@@ -12,6 +12,7 @@ class Product extends Model
     use HasFactory, HasUuids;
     protected $fillable = [
         'id',
+        'ownerId',
         'projectTitle',
         'projectNumber',
         'region',

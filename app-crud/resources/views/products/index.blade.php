@@ -35,7 +35,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="vendorsDropdown">
                         <li><a class="dropdown-item" href="{{route('product.index')}}">Technical Proposal Submissions</a></li>
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{route('profile.view')}}">Profile</a></li>
                     </ul>
                 </li>
         <li class="nav-item">
@@ -52,16 +52,16 @@
   </div>
 </nav>
 
-<div class="container">
+<div class="container p-0">
   <div class="row justify-content-between align-items-center">
     <div class="col-auto">
-      <p class="m-0">Welcome, <span class="text-primary lead">{{ Auth::user()->name }}</span></p>
+      <p class="m-0">Welcome, <a class="profile_link" href="{{route('profile.view')}}"><span class="text-primary lead">{{ Auth::user()->name }}</span></a></p>
     </div>
     
     <div class="col-auto">
       <form method="post" action="{{ route('logout') }}">
         @csrf
-        <button type="submit" class="btn btn-danger" style="font-size:9px;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="logout-button-tooltip" data-bs-title="Logout"><i class="bi bi-power"></i></button>
+        <button type="submit" class="btn btn-danger" style="font-size:15px;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="logout-button-tooltip" data-bs-title="Logout"><i class="bi bi-power"></i></button>
       </form>
     </div>
   </div>
@@ -142,6 +142,11 @@
     </div>
   </div>
 </div>
+<footer class="bg-dark text-light py-3" style="background-color: #3170B6 !important;">
+        <div class="container text-center">
+            <p class="m-0">&copy; {{ date('Y') }} Shorefield Sdn Bhd. All rights reserved.</p>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>

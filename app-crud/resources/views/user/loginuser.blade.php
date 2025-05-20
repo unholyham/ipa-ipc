@@ -72,6 +72,7 @@
                         </form>
                     </div>
                     <p class="text-center">Don't Have an Account? <a href="{{route('register')}}">Register Account</a></p>
+                    <p class="text-center"><a href="#">Forgot Your Password?</a></p>
                 </div>
             </div>
         </div>
