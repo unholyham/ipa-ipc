@@ -44,7 +44,7 @@ class ProposalController extends Controller
             'mainContractor' => 'required',
             'reviewStatus' => 'nullable',
             'approvedStatus' => 'nullable',
-            'pathToTP' => 'nullable|file|mimes:pdf,doc,docx|max:20480'
+            'pathToTP' => 'nullable|file|mimes:pdf,doc,docx|max:61440'
         ]);
 
         if ($validator->fails()) {
@@ -57,28 +57,29 @@ class ProposalController extends Controller
         $data['ownerId'] = auth()->id();
         $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
         $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
+        $data['pathToTP'] = $data['pathToTP'] ?? null;
 
         if ($request->hasFile('pathToTP')) {
             $file = $request->file('pathToTP');
             $extension = $file->getClientOriginalExtension();
             $projectTitle = $data['projectTitle'];
             $dateSubmitted = now()->format('Ymd');
-            $filename = $dateSubmitted . '_' . $projectTitle . '.' . $extension;
+            $filename = $dateSubmitted . '_' . 'TP'. '_' . $projectTitle . '.' . $extension;
             $path = $file->storeAs('public/Technical_Proposal_Uploads', $filename);
             $data['pathToTP'] = $path;
         }
 
         $newProposal = Proposal::create($data); // Use the $data array containing all validated fields
 
-        return redirect(route('proposal.index'));
+        return redirect()->route('proposal.index')->with('success', 'Technical proposal submitted successfully!');
     }
     else {
         abort(403, 'Unauthorized.');
     }
 }
 
-    public function edit(Proposal $proposal){
-        return view('proposal.edit', ['proposal' => $proposal]);
+    public function view(Proposal $proposal){
+        return view('proposal.view', ['proposal' => $proposal]);
     }
 
     public function update(Proposal $proposal, Request $request){
@@ -114,6 +115,22 @@ class ProposalController extends Controller
         }
 
         $filePath = $proposal->pathToTP;
+        $fileName = basename($filePath);
+
+
+       return Storage::response($filePath, $fileName, [
+        'Content-Type' => Storage::mimeType($filePath),
+        'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
+    }
+
+    public function downloadPdf(Proposal $proposal)
+    {
+        if (!$proposal->pathToTP) {
+            abort(404, 'PDF not found');
+        }
+
+        $filePath = $proposal->pathToTP;
         $downloadName = basename($filePath);
 
 
@@ -121,4 +138,38 @@ class ProposalController extends Controller
         'Content-Type' => Storage::mimeType($filePath),
         ]);
     }
+
+    public function updateReviewStatus(Request $request, Proposal $proposal)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'reviewStatus' => 'required|in:In Review',
+        ]);
+
+        $proposal->update(['reviewStatus' => $request->input('reviewStatus')]);
+
+        return redirect()->route('proposal.view', ['proposal' => $proposal->id])->with('success', 'Review status updated successfully!');
+    }
+
+    public function updateApprovedStatus(Request $request, Proposal $proposal)
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'approvedStatus' => 'required|in:Approved',
+        ]);
+        $proposal->update([
+            'approvedStatus' => $request->input('approvedStatus'),
+            'reviewStatus' => 'Reviewed'
+        ]);
+
+        return redirect()->route('proposal.index')->with('success', 'Approval status updated successfully!');
+    }
+
 }
+

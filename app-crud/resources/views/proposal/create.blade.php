@@ -3,57 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Technical Proposal Form</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/nodeJS@1.0.0/index.min.js"></script>
-    
+    <!--Include Head CDN-->
+    @include('partials.headcdn')
+    <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+  <!--Include Navbar Based on Role-->
+  @if(Auth::user()->role ==='admin')
+    @include('partials.adminnav')
+  @else
+    @include('partials.usernav')
+  @endif
+  <!--End of Include-->
 
-<nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container-fluid">
-    <div class="d-flex align-items-center">
-      <a class="navbar-brand" href="{{route('proposal.index')}}">
-        <img src="/images/SSB_Logo.jpg" alt="Your Logo" height="70">
-      </a>
-    </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="vendorsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        VENDORS
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="vendorsDropdown">
-                        <li><a class="dropdown-item" href="{{route('proposal.index')}}">Technical Proposal Submissions</a></li>
-                        <li><a class="dropdown-item" href="{{route('profile.view')}}">Profile</a></li>
-                    </ul>
-                </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{route('proposal.create')}}">SUBMIT PROPOSAL</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">WHAT WE DO</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">CONTACT US</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<div class="container pt-2">
+<div class="container pt-2 flex-grow-1">
     <h1 class="text-center mt-4">Technical Proposal Form</h1>
     <div class="mt-4">
         <form method="post" action="{{route('proposal.store')}}" enctype="multipart/form-data">
@@ -87,12 +52,30 @@
                 @enderror
             </div>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control @error('region') is-invalid @enderror" name="region" placeholder="Region*" value="{{ old('region') }}" id="project_region">
+                <select class="form-select @error('region') is-invalid @enderror" id="project_region" name="region" aria-label="Select Region">
+                    <option value="" class="state_option">Select a State / Federal Territory</option>
+                    <option value="Johor" class="state_option" {{ old('region') == 'Johor' ? 'selected' : '' }}>Johor</option>
+                    <option value="Kedah" class="state_option" {{ old('region') == 'Kedah' ? 'selected' : '' }}>Kedah</option>
+                    <option value="Kelantan" class="state_option" {{ old('region') == 'Kelantan' ? 'selected' : '' }}>Kelantan</option>
+                    <option value="Malacca" class="state_option" {{ old('region') == 'Malacca' ? 'selected' : '' }}>Malacca</option>
+                    <option value="Negeri Sembilan" class="state_option" {{ old('region') == 'Negeri Sembilan' ? 'selected' : '' }}>Negeri Sembilan</option>
+                    <option value="Pahang" class="state_option" {{ old('region') == 'Pahang' ? 'selected' : '' }}>Pahang</option>
+                    <option value="Penang" class="state_option" {{ old('region') == 'Penang' ? 'selected' : '' }}>Penang</option>
+                    <option value="Perak" class="state_option" {{ old('region') == 'Perak' ? 'selected' : '' }}>Perak</option>
+                    <option value="Perlis" class="state_option" {{ old('region') == 'Perlis' ? 'selected' : '' }}>Perlis</option>
+                    <option value="Sabah" class="state_option" {{ old('region') == 'Sabah' ? 'selected' : '' }}>Sabah</option>
+                    <option value="Sarawak" class="state_option" {{ old('region') == 'Sarawak' ? 'selected' : '' }}>Sarawak</option>
+                    <option value="Selangor" class="state_option" {{ old('region') == 'Selangor' ? 'selected' : '' }}>Selangor</option>
+                    <option value="Terengganu" class="state_option" {{ old('region') == 'Terengganu' ? 'selected' : '' }}>Terengganu</option>
+                    <option value="Kuala Lumpur" class="state_option" {{ old('region') == 'Kuala Lumpur' ? 'selected' : '' }}>Kuala Lumpur (Federal Territory)</option>
+                    <option value="Labuan" class="state_option" {{ old('region') == 'Labuan' ? 'selected' : '' }}>Labuan (Federal Territory)</option>
+                    <option value="Putrajaya" class="state_option" {{ old('region') == 'Putrajaya' ? 'selected' : '' }}>Putrajaya (Federal Territory)</option>
+                </select>
                 <label for="project_region">Region*</label>
                 @error('region')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
                 @enderror
             </div>
             <div class="form-floating mb-3">
@@ -116,16 +99,17 @@
           <div>
             <label for="#tpLabel">Technical Proposal Document*</label>
             <input type="file" class="form-control" name="pathToTP" id="tpLabel">
-            <p>Max filesize: 20MB</p>
+            <p>Max filesize: 60MB</p>
           </div>
-          <div class="mt-3">
-            <button type="button" class="form-control bg-primary text-light" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
+          <div class="mt-2 mb-2">
+            <button type="button" class="btn btn-primary text-light shadow-lg w-100" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
                 Submit
             </button>
           </div>
-          <div class="mb-1">
-            <input type="reset" class="form-control bg-light" value="Reset">
+          <div class="mt-2 mb-2">
+            <button type="reset" class="btn btn-light shadow-lg w-100">Reset</button>
           </div>
+          
           <div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -146,7 +130,12 @@
     </form>
     </div>
 </div>    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+<!--Include Footer-->
+@include('partials.footer')
+<!--End of Include-->
+
+<!--Include Body CDN-->
+@include('partials.bodycdn')
+<!--End of Body CDN-->
 </body>
 </html>

@@ -10,7 +10,11 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('user.loginuser');
+        //Check if a user has logged in
+        if (Auth::check()) {
+            return redirect()->route('proposal.index');//Redirect to home page
+        }
+        return view('user.loginuser');//Otherwise just display login page
     }
 
     public function login(Request $request)

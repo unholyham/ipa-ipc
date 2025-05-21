@@ -15,13 +15,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->unsignedBigInteger('ownerId');
             $table->string('projectTitle');
-            $table->string('projectNumber');
+            $table->string('projectNumber')->nullable();
             $table->string('region');
             $table->string('preparedBy');
             $table->string('mainContractor');
-            $table->string('reviewStatus');
-            $table->string('approvedStatus');
-            $table->string('pathToTP');
+            $table->string('reviewStatus')->nullable();
+            $table->string('approvedStatus')->nullable();
+            $table->string('pathToTP')->nullable();
             $table->timestamps();
 
             $table->foreign('ownerId')->references('id')->on('users')->onDelete('cascade');
