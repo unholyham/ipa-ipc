@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 
 
 class Proposal extends Model
@@ -20,10 +21,15 @@ class Proposal extends Model
         'mainContractor',
         'reviewStatus',
         'approvedStatus',
-        'pathToTP'
+        'pathToTP',
+        'pathToJMS'
     ];
 
     protected $keyType = 'string';
 
     public $incrementing = false;
+
+    public function owner() {
+        return $this->belongsTo(User::class, 'ownerId');
+    }
 }

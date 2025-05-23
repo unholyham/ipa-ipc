@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('reviewStatus')->nullable();
             $table->string('approvedStatus')->nullable();
             $table->string('pathToTP')->nullable();
+            $table->string('pathToJMS')->nullable();
             $table->timestamps();
 
             $table->foreign('ownerId')->references('id')->on('users')->onDelete('cascade');

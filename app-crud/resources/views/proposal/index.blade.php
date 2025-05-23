@@ -9,7 +9,7 @@
     <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css"> 
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light bg-gradient">
   <!--Include Navbar Based on Role-->
   @if(Auth::user()->role ==='admin')
     @include('partials.adminnav')
@@ -23,21 +23,6 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
-<div class="container p-0 flex-grow-1">
-  <div class="row justify-content-between align-items-center">
-    <div class="col-auto">
-      <p class="m-0">Welcome, <a class="profile_link" href="{{route('profile.view')}}"><span class="text-primary lead">{{ Auth::user()->name }}</span></a></p>
-    </div>
-    
-    <div class="col-auto">
-      <form method="post" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="btn btn-danger" style="font-size:15px;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="logout-button-tooltip" data-bs-title="Logout"><i class="bi bi-power"></i></button>
-      </form>
-    </div>
-  </div>
-</div>
-
 <div class="container pt-2">
   <h1 class="text-center">Technical Proposal Submissions</h1>
   <div class="row">
@@ -121,14 +106,12 @@
 @include('partials.bodycdn')
 <!--End of Body CDN-->
     <script>
-      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
         $(document).ready( function () {
             new DataTable('#pendingTable', {
                 scrollX: true,
                 order:[[1, 'desc']],
                 language: {
-                  emptyTable: "No pending technical proposals found. All proposals are either approved or there are no submissions yet."
+                  emptyTable: "No pending Technical Proposal submissions found. All proposals are either approved or there are no pending Technical Proposal submissions yet."
                 },
                 layout: {
                     bottomStart: [

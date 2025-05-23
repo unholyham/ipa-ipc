@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Proposal;
+use App\Models\User;
+use App\Mail\ProposalUnderReview;
+use App\Mail\ProposalApproved;
+use App\Notifications\ProposalUnderReviewNotification;
+use App\Notifications\ProposalApprovedNotification;
+use App\Notifications\NewProposalSubmittedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ProposalController extends Controller
 {
@@ -44,7 +51,8 @@ class ProposalController extends Controller
             'mainContractor' => 'required',
             'reviewStatus' => 'nullable',
             'approvedStatus' => 'nullable',
-            'pathToTP' => 'nullable|file|mimes:pdf,doc,docx|max:61440'
+            'pathToTP' => 'nullable|file|mimes:pdf,doc,docx|max:61440',
+            'pathToJMS' => 'nullable|file|mimes:pdf,doc,docx|max:61440',
         ]);
 
         if ($validator->fails()) {
@@ -58,6 +66,7 @@ class ProposalController extends Controller
         $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
         $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
         $data['pathToTP'] = $data['pathToTP'] ?? null;
+        $data['pathToJMS'] = $data['pathToJMS'] ?? null;
 
         if ($request->hasFile('pathToTP')) {
             $file = $request->file('pathToTP');
@@ -69,8 +78,23 @@ class ProposalController extends Controller
             $data['pathToTP'] = $path;
         }
 
+        if ($request->hasFile('pathToJMS')) {
+            $file = $request->file('pathToJMS');
+            $extension = $file->getClientOriginalExtension();
+            $projectTitle = $data['projectTitle'];
+            $dateSubmitted = now()->format('Ymd');
+            $filename = $dateSubmitted . '_' . 'JMS'. '_' . $projectTitle . '.' . $extension;
+            $path = $file->storeAs('public/Joint_Measurement_Sheet_Uploads', $filename);
+            $data['pathToJMS'] = $path;
+        }
+
         $newProposal = Proposal::create($data); // Use the $data array containing all validated fields
 
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new NewProposalSubmittedNotification($newProposal));
+        }
         return redirect()->route('proposal.index')->with('success', 'Technical proposal submitted successfully!');
     }
     else {
@@ -97,7 +121,7 @@ class ProposalController extends Controller
         $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
         $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
         $proposal->update($data);
-        return redirect(route('proposal.index'))->with('success', 'Proposal Update Successfully');
+        return redirect(route('proposal.index'))->with('success', 'Proposal Updated Successfully');
     }
 
     public function destroy(Proposal $proposal){
@@ -108,7 +132,7 @@ class ProposalController extends Controller
         return redirect(route('proposal.index'))->with('success', 'Proposal Deleted Successfully');
     }
 
-    public function displayPdf(Proposal $proposal)
+    public function displayTP(Proposal $proposal)
     {
         if (!$proposal->pathToTP) {
             abort(404, 'PDF not found');
@@ -124,13 +148,44 @@ class ProposalController extends Controller
         ]);
     }
 
-    public function downloadPdf(Proposal $proposal)
+    public function displayJMS(Proposal $proposal)
+    {
+        if (!$proposal->pathToJMS) {
+            abort(404, 'PDF not found');
+        }
+
+        $filePath = $proposal->pathToJMS;
+        $fileName = basename($filePath);
+
+
+       return Storage::response($filePath, $fileName, [
+        'Content-Type' => Storage::mimeType($filePath),
+        'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
+    }
+
+    public function downloadTP(Proposal $proposal)
     {
         if (!$proposal->pathToTP) {
             abort(404, 'PDF not found');
         }
 
         $filePath = $proposal->pathToTP;
+        $downloadName = basename($filePath);
+
+
+       return Storage::download($filePath, $downloadName, [
+        'Content-Type' => Storage::mimeType($filePath),
+        ]);
+    }
+
+    public function downloadJMS(Proposal $proposal)
+    {
+        if (!$proposal->pathToJMS) {
+            abort(404, 'PDF not found');
+        }
+
+        $filePath = $proposal->pathToJMS;
         $downloadName = basename($filePath);
 
 
@@ -146,11 +201,24 @@ class ProposalController extends Controller
         }
 
         $request->validate([
-            'reviewStatus' => 'required|in:In Review',
+            'reviewStatus' => 'required|in:Under Review',
         ]);
 
         $proposal->update(['reviewStatus' => $request->input('reviewStatus')]);
+        $owner = $proposal->owner;
 
+        if ($owner && $owner->email) {
+            try {
+                Mail::to($owner->email)->send(new ProposalUnderReview($proposal));
+                Log::info('Under Review email sent for proposal: ' . $proposal->id . ' to ' . $owner->email);
+            } catch (\Exception $e) {
+                Log::error('Failed to send review email for proposal: ' . $proposal->id . '. Error: ' . $e->getMessage());
+            }
+            //Dispatch database notification
+            $owner->notify(new ProposalUnderReviewNotification($proposal));
+        } else {
+            Log::warning('Could not send review email for proposal: ' . $proposal->id . '. Owner or owner email not found.');
+        }
         return redirect()->route('proposal.view', ['proposal' => $proposal->id])->with('success', 'Review status updated successfully!');
     }
 
@@ -167,7 +235,21 @@ class ProposalController extends Controller
             'approvedStatus' => $request->input('approvedStatus'),
             'reviewStatus' => 'Reviewed'
         ]);
+        
+        $owner = $proposal->owner;
 
+        if ($owner && $owner->email) {
+            try {
+                Mail::to($owner->email)->send(new ProposalApproved($proposal));
+                Log::info('Approval email sent for proposal: ' . $proposal->id . ' to ' . $owner->email);
+            } catch (\Exception $e) {
+                Log::error('Failed to send approval email for proposal: ' . $proposal->id . '. Error: ' . $e->getMessage());
+            }
+            //Dispatch database notification
+            $owner->notify(new ProposalApprovedNotification($proposal));
+        } else {
+            Log::warning('Could not send approval email for proposal: ' . $proposal->id . '. Owner or owner email not found.');
+        }
         return redirect()->route('proposal.index')->with('success', 'Approval status updated successfully!');
     }
 

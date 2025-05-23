@@ -9,7 +9,7 @@
     <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light bg-gradient">
   <!--Include Navbar Based on Role-->
   @if(Auth::user()->role ==='admin')
     @include('partials.adminnav')
@@ -17,11 +17,10 @@
     @include('partials.usernav')
   @endif
   <!--End of Include-->
-
 <div class="container pt-2 flex-grow-1">
-    <h1 class="text-center mt-4">Technical Proposal Form</h1>
+    <h1 class="text-center">Technical Proposal Form</h1>
     <div class="mt-4">
-        <form method="post" action="{{route('proposal.store')}}" enctype="multipart/form-data">
+        <form method="post" action="{{route('proposal.store')}}" enctype="multipart/form-data" id="proposalForm">
         @csrf
         @if ($errors->any())
           <div class="alert alert-danger">
@@ -101,8 +100,13 @@
             <input type="file" class="form-control" name="pathToTP" id="tpLabel">
             <p>Max filesize: 60MB</p>
           </div>
+          <div>
+            <label for="#jmsLabel">Joint Measurement Sheet Document*</label>
+            <input type="file" class="form-control" name="pathToJMS" id="jmsLabel">
+            <p>Max filesize: 60MB</p>
+          </div>
           <div class="mt-2 mb-2">
-            <button type="button" class="btn btn-primary text-light shadow-lg w-100" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal">
+            <button type="button" class="btn btn-primary text-light shadow-lg w-100" data-bs-toggle="modal" data-bs-target="#confirmSubmitModal" id="mainSubmitButton">
                 Submit
             </button>
           </div>
@@ -110,20 +114,20 @@
             <button type="reset" class="btn btn-light shadow-lg w-100">Reset</button>
           </div>
           
-          <div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
+          <div class="modal fade" id="confirmSubmitModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="confirmSubmitModalLabel">Confirm Submission</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         Are you sure you want to submit this technical proposal?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelSubmitButton">Cancel</button>
                         <button type="submit" class="btn btn-primary" id="realSubmitButton">Submit Proposal</button>
                     </div>
+                     <small class="text-danger text-center" id="submissionMessage" style="display: none;"><strong>Please stay on this page until submission is complete.</strong></small>
                 </div>
             </div>
         </div>
@@ -137,5 +141,35 @@
 <!--Include Body CDN-->
 @include('partials.bodycdn')
 <!--End of Body CDN-->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const proposalForm = document.getElementById('proposalForm');
+            const mainSubmitButton = document.getElementById('mainSubmitButton');
+            const realSubmitButton = document.getElementById('realSubmitButton');
+            const cancelSubmitButton = document.getElementById('cancelSubmitButton'); // Get the cancel button
+            const confirmSubmitModal = new bootstrap.Modal(document.getElementById('confirmSubmitModal'));
+
+            realSubmitButton.addEventListener('click', function(event) {
+                // Prevent default form submission initially
+                event.preventDefault(); 
+
+                // Disable all relevant buttons
+                mainSubmitButton.disabled = true;
+                realSubmitButton.disabled = true;
+                cancelSubmitButton.disabled = true; // Disable the cancel button
+
+                // Add spinner to the real submit button
+                realSubmitButton.innerHTML = `
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Submitting...
+                `;
+                //Reveal message
+                submissionMessage.style.display = 'block';
+
+                // Submit the form
+                proposalForm.submit();
+            });
+        });
+    </script>
 </body>
 </html>

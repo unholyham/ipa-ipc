@@ -10,7 +10,6 @@
   
   body{
       font-weight: 400;
-      background-color: #F8F9FA;
       font-family: Montserrat, 'Times New Roman', Arial;
       width: 100%;
       font-size: 12px;
@@ -26,6 +25,15 @@
 
   .profile_link {
     text-decoration: none;
+  }
+
+  .nav_icon {
+    border-radius: 0;
+  }
+
+  #toolbar_nav {
+    background-color: #5f97d4;
+    border-bottom: 2px solid black;
   }
 
   form{
@@ -59,6 +67,10 @@
   background: #3170B6;
 }
 
-.login-button-tooltip, .register-button-tooltip, .logout-button-tooltip {
+.login-button-tooltip, .register-button-tooltip {
   --bs-tooltip-bg: #343a40;
+}
+
+footer {
+  background-color: #3170B6;
 }

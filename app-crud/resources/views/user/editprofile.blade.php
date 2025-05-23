@@ -9,7 +9,7 @@
     <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light bg-gradient">
   <!--Include Navbar Based on Role-->
   @if(Auth::user()->role ==='admin')
     @include('partials.adminnav')
@@ -17,10 +17,10 @@
     @include('partials.usernav')
   @endif
   <!--End of Include-->
-  
+
 <div class="container pt-2 flex-grow-1">
-    <h1 class="text-center mt-4">Edit Profile</h1>
-    <div class="mt-4">
+    <h1 class="text-center">Edit Profile</h1>
+    <div>
         <form method="post" action="{{route('profile.update')}}" enctype="multipart/form-data">
         @method('PUT')
         @csrf

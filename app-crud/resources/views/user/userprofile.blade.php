@@ -9,7 +9,7 @@
     <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light bg-gradient">
   <!--Include Navbar Based on Role-->
   @if(Auth::user()->role ==='admin')
     @include('partials.adminnav')
@@ -19,7 +19,7 @@
   <!--End of Include-->
 
 <div class="container pt-2 flex-grow-1">
-    <h1 class="text-center mt-4">Profile</h1>
+    <h1 class="text-center">Profile</h1>
     <div class="mt-4">
         <div class="row justify-content-center"> <div class="col-md-6"> <div class="card shadow-lg">
                     <div class="card-body">
