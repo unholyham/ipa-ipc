@@ -24,7 +24,7 @@
 
     <div class="container pt-2 flex-grow-1">
     <h1 class="text-center">Technical Proposal Details</h1>
-    <div class="row border-top border-start border-end p-1 text-white mt-4" id="tp_table_info">
+    <div class="row border-top border-start border-end p-1 text-white mt-4 rounded-top" id="tp_table_info">
         <div class="col-md-3"><h6 class="subject">Project Title</h6></div>
         <div class="col-md-3"><h6>{{$proposal->projectTitle}}</h6></div>
     </div>
@@ -65,7 +65,7 @@
         <div class="col-md-3"><h6 class="subject">Approved Status</h6></div>
         <div class="col-md-3">
             <h6>{{$proposal->approvedStatus}}</h6>
-            {{--  Conditional button for Approve Status --}}
+            {{--  Conditional buttons for Approve Status --}}
             @if(Auth::user()->role === 'admin' && $proposal->reviewStatus === 'Under Review' && $proposal->approvedStatus !== 'Approved')
                 <button type="button" class="btn btn-sm btn-success text-white"
                         data-bs-toggle="modal" data-bs-target="#confirmApproveModal">
@@ -76,9 +76,24 @@
                     @method('PATCH')
                     <input type="hidden" name="approvedStatus" value="Approved">
                 </form>
+                <button type="button" class="btn btn-sm btn-danger text-white"
+                        data-bs-toggle="modal" data-bs-target="#confirmRejectModal">
+                    Reject
+                </button>
+                <form id="updateRejectedStatusForm" action="{{ route('proposal.updateApprovedStatus', $proposal->id) }}" method="POST" style="display: none;">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="approvedStatus" value="Rejected">
+                </form>
             @endif
         </div>
     </div>
+    @if($proposal->approvedStatus === 'Rejected')
+    <div class="row border-top border-start border-end p-1">
+        <div class="col-md-3"><h6 class="subject">Remarks</h6></div>
+        <div class="col-md-3"><h6>{{$proposal->remarks}}</h6></div>
+    </div>
+    @endif
     <div class="row border p-1">
         <div class="col-md-3"><h6 class="subject">Technical Proposal</h6></div>
         <div class="col-md-3">
@@ -142,6 +157,33 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="confirmRejectModal" tabindex="-1" aria-labelledby="confirmRejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmRejectModalLabel">Confirm Rejection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to <strong>"Reject"</strong> this technical proposal?
+                <br><br>
+                This action will notify the user that their proposal has been rejected.
+                <hr>
+                <div class="mb-3">
+                    <label for="remarks" class="form-label">Reason for Rejection*:</label>
+                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" rows="3" name="remarks"></textarea>
+                    <div id="rejectErrorMessage" class="text-danger mt-2 d-none">
+                        Remarks field is required
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="submitRejectStatus()">Agree</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="tpViewModal-{{ $proposal->id }}" tabindex="-1" aria-labelledby="tpViewModalLabel-{{ $proposal->id }}" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
@@ -196,6 +238,49 @@
     function submitApproveStatus() {
         document.getElementById('updateApprovedStatusForm').submit();
     }
+    function submitRejectStatus() {
+        const remarksInput = document.getElementById('remarks');
+        const rejectErrorMessage = document.getElementById('rejectErrorMessage');
+        const remarksValue = remarksInput.value.trim();
+
+        if (remarksValue === '') {
+            rejectErrorMessage.classList.remove('d-none');//Show Error Message if remarks field is empty
+            remarksInput.classList.add('is-invalid');
+        } else {
+            rejectErrorMessage.classList.add('d-none');//Hide Error Message if remarks is filled
+            remarksInput.classList.remove('is-invalid');
+
+            // Dynamically add the remarks to the form before submission
+            const form = document.getElementById('updateRejectedStatusForm');
+            let hiddenRemarksInput = form.querySelector('input[name="remarks"]');
+            if (!hiddenRemarksInput) {
+                hiddenRemarksInput = document.createElement('input');
+                hiddenRemarksInput.type = 'hidden';
+                hiddenRemarksInput.name = 'remarks';
+                form.appendChild(hiddenRemarksInput);
+            }
+            hiddenRemarksInput.value = remarksValue;
+
+            console.log('Rejecting with remarks:', remarksValue);
+
+            form.submit();
+
+            //Close the modal after successful submission
+            const rejectModal = bootstrap.Modal.getInstance(document.getElementById('confirmRejectModal'));
+            if (rejectModal) {
+                rejectModal.hide();
+            }
+        }
+    }
+    document.getElementById('confirmRejectModal').addEventListener('hidden.bs.modal', function () {
+        const remarksInput = document.getElementById('remarks');
+        const rejectErrorMessage = document.getElementById('rejectErrorMessage');
+
+        // Reset input field and error message
+        remarksInput.value = '';
+        rejectErrorMessage.classList.add('d-none');
+        remarksInput.classList.remove('is-invalid');
+    });
 </script>
 </body>
 </html>

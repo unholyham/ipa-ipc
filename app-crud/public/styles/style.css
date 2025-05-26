@@ -74,3 +74,8 @@
 footer {
   background-color: #3170B6;
 }
+/*Datatable tablehead */
+.dt-scroll-head {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}

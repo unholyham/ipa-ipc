@@ -6,8 +6,10 @@ use App\Models\Proposal;
 use App\Models\User;
 use App\Mail\ProposalUnderReview;
 use App\Mail\ProposalApproved;
+use App\Mail\ProposalRejected;
 use App\Notifications\ProposalUnderReviewNotification;
 use App\Notifications\ProposalApprovedNotification;
+use App\Notifications\ProposalRejectedNotification;
 use App\Notifications\NewProposalSubmittedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -22,7 +24,7 @@ class ProposalController extends Controller
         if (auth()->user()->role === 'admin') {
             // If admin, fetch all proposals
             $proposals = Proposal::all();
-            return view('admin.index', ['proposals' => $proposals]);
+            return view('proposal.index', ['proposals' => $proposals]);
         } else {
             // If not admin, fetch only the user's proposals
             $proposals = Proposal::where('ownerId', auth()->id())->get();
@@ -51,6 +53,7 @@ class ProposalController extends Controller
             'mainContractor' => 'required',
             'reviewStatus' => 'nullable',
             'approvedStatus' => 'nullable',
+            'remarks' => 'nullable',
             'pathToTP' => 'nullable|file|mimes:pdf,doc,docx|max:61440',
             'pathToJMS' => 'nullable|file|mimes:pdf,doc,docx|max:61440',
         ]);
@@ -65,6 +68,7 @@ class ProposalController extends Controller
         $data['ownerId'] = auth()->id();
         $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
         $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
+        $data['remarks'] = $data['remarks'] ?? null;
         $data['pathToTP'] = $data['pathToTP'] ?? null;
         $data['pathToJMS'] = $data['pathToJMS'] ?? null;
 
@@ -113,7 +117,7 @@ class ProposalController extends Controller
             'region' => 'required',
             'preparedBy' => 'required',
             'mainContractor' => 'required',
-            'reviewStatus' => 'nullable',
+            'reviewStatus' => 'required',
             'approvedStatus' => 'nullable',
             'pathToTP' => 'nullable'
         ]);
@@ -229,10 +233,16 @@ class ProposalController extends Controller
         }
 
         $request->validate([
-            'approvedStatus' => 'required|in:Approved',
+            'approvedStatus' => 'required|in:Approved,Rejected',
+            'remarks' => 'required',
         ]);
+
+        $newApprovedStatus = $request->input('approvedStatus');
+        $successMessage = '';
+
         $proposal->update([
             'approvedStatus' => $request->input('approvedStatus'),
+            'remarks' => $request->input('remarks'),
             'reviewStatus' => 'Reviewed'
         ]);
         
@@ -240,15 +250,25 @@ class ProposalController extends Controller
 
         if ($owner && $owner->email) {
             try {
-                Mail::to($owner->email)->send(new ProposalApproved($proposal));
-                Log::info('Approval email sent for proposal: ' . $proposal->id . ' to ' . $owner->email);
+                if ($newApprovedStatus === 'Approved') {
+                    Mail::to($owner->email)->send(new ProposalApproved($proposal));
+                    $owner->notify(new ProposalApprovedNotification($proposal));
+                    Log::info('Approval email sent for proposal: ' . $proposal->id . ' to ' . $owner->email);
+                    $successMessage = 'Proposal approved successfully!';
+                } elseif ($newApprovedStatus === 'Rejected') {
+                    Mail::to($owner->email)->send(new ProposalRejected($proposal));
+                    $owner->notify(new ProposalRejectedNotification($proposal));
+                    Log::info('Rejection email sent for proposal: ' . $proposal->id . ' to ' . $owner->email);
+                    $successMessage = 'Proposal rejected successfully!';
+                }
+                
             } catch (\Exception $e) {
-                Log::error('Failed to send approval email for proposal: ' . $proposal->id . '. Error: ' . $e->getMessage());
+                Log::error('Failed to send status update email for proposal: ' . $proposal->id . '. Error: ' . $e->getMessage());
+                $successMessage = 'Proposal status updated, but email notification failed.';
             }
-            //Dispatch database notification
-            $owner->notify(new ProposalApprovedNotification($proposal));
         } else {
-            Log::warning('Could not send approval email for proposal: ' . $proposal->id . '. Owner or owner email not found.');
+            Log::warning('Could not send status update email for proposal: ' . $proposal->id . '. Owner or owner email not found.');
+            $successMessage = 'Proposal status updated, but user notification could not be sent (owner email missing).';
         }
         return redirect()->route('proposal.index')->with('success', 'Approval status updated successfully!');
     }

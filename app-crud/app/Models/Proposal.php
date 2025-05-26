@@ -21,6 +21,7 @@ class Proposal extends Model
         'mainContractor',
         'reviewStatus',
         'approvedStatus',
+        'remarks',
         'pathToTP',
         'pathToJMS'
     ];

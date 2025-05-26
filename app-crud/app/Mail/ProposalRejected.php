@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Proposal;
 
-class ProposalApproved extends Mailable
+class ProposalRejected extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -29,7 +29,7 @@ class ProposalApproved extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Proposal ' .$this->proposal->projectTitle . ' Has Been Approved',
+            subject: 'Proposal ' .$this->proposal->projectTitle . ' Has Been Rejected',
         );
     }
 
@@ -39,7 +39,7 @@ class ProposalApproved extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.proposal-approved',
+            markdown: 'emails.proposal-rejected',
             with: [
                 'proposal' => $this->proposal,
             ]

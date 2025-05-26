@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('mainContractor');
             $table->string('reviewStatus')->nullable();
             $table->string('approvedStatus')->nullable();
+            $table->string('remarks')->nullable();
             $table->string('pathToTP')->nullable();
             $table->string('pathToJMS')->nullable();
             $table->timestamps();

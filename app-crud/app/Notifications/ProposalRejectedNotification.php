@@ -4,14 +4,16 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Proposal;
 
-class ProposalUnderReviewNotification extends Notification
+class ProposalRejectedNotification extends Notification
 {
     use Queueable;
 
     protected $proposal;
+
     /**
      * Create a new notification instance.
      */
@@ -30,6 +32,7 @@ class ProposalUnderReviewNotification extends Notification
         return ['database'];
     }
 
+
     /**
      * Get the array representation of the notification.
      *
@@ -38,8 +41,8 @@ class ProposalUnderReviewNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'Proposal Under Review',
-            'message' => 'Your proposal <strong>"' . $this->proposal->projectTitle . '"</strong> is now under review.',
+            'title' => 'Proposal Rejected',
+            'message' => 'Your proposal <strong>"' . $this->proposal->projectTitle . '"</strong> has been rejected',
             'proposal_id' => $this->proposal->id,
             'link' => route('proposal.view', $this->proposal->id),
         ];

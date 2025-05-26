@@ -29,7 +29,7 @@ class ProposalUnderReview extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Proposal' .$this->proposal->projectTitle . ' Is Under Review',
+            subject: 'Proposal ' .$this->proposal->projectTitle . ' Is Under Review',
         );
     }
 

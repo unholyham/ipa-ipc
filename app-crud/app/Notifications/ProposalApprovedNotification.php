@@ -41,7 +41,7 @@ class ProposalApprovedNotification extends Notification
     {
         return [
             'title' => 'Proposal Approved!',
-            'message' => 'Your proposal "' . $this->proposal->projectTitle . '" has been approved!',
+            'message' => 'Your proposal <strong>"' . $this->proposal->projectTitle . '"</strong> has been approved!',
             'proposal_id' => $this->proposal->id,
             'link' => route('proposal.view', $this->proposal->id),
         ];

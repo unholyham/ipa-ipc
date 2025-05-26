@@ -1,3 +1,4 @@
+<!-- This Document is identical to index.blade.php(proposal) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
