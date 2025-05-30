@@ -9,7 +9,7 @@
     <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css">
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light bg-gradient">
+<body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
   <!--Include Navbar Based on Role-->
   @if(Auth::user()->role ==='admin')
     @include('partials.adminnav')

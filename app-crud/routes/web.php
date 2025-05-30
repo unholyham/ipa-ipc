@@ -4,8 +4,9 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
@@ -36,7 +37,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])->name('notifications.unread');
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::post('/notifications/{notification}/mark-as-read-single', [NotificationController::class, 'markSingleAsRead'])->name('notifications.markSingleAsRead');
+
+    //Admin Controller
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin/users/pending', [AdminController::class, 'showPendingUsers'])->name('admin.users.pending');
+        Route::get('/admin/users/pending/{user}', [AdminController::class, 'viewPendingUser'])->name('admin.users.view');
+        Route::patch('/admin/users/{user}/verify-status', [AdminController::class, 'updateVerificationStatus'])->name('admin.users.update');
+    }); 
 });
+
 //User Controller
 Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [UserController::class, 'register'])->name('user.store');

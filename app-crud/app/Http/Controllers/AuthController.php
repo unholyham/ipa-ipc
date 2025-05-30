@@ -29,8 +29,17 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->has('remember'))) {
-            $request->session()->regenerate();
-            return redirect()->route('proposal.index');
+
+            $user = Auth::user();
+            if ($user->verificationStatus === 'Approved') {
+                $request->session()->regenerate();
+                return redirect()->route('proposal.index');
+            } else {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors(['email' => 'Your account is not verified. Please check your email or contact support.'])->withInput();
+            }
         }
         return back()->withErrors(['email' => 'Invalid login credentials'])->withInput();
     }

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Mail\NewAccountRegistrationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -28,14 +30,17 @@ class UserController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
+        $data = $validator->validated();
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'user'
-        ]);
+        $data['password'] = Hash::make($request->password);
+        $data['role'] = 'user';
+        $data['verificationStatus'] = 'Pending';
+        $data['remarks'] = null;
 
-        return redirect()->route('login');
+        $user = User::create($data);
+
+        //Send New User Registration email to self
+        Mail::to(config('mail.from.address'))->send(new NewAccountRegistrationMail($user));
+        return redirect()->route('login')->with('success', 'Account registered successfully! Our team is verifying your application. An email will be sent once your account has been approved.');
     }
 }

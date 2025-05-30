@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password123'),
             'remember_token' => Str::random(10),
             'role' => 'admin',
+            'verificationStatus' => 'Approved',
         ]);
         User::create([
                 'name' => 'Contractor Company',
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'remember_token' => Str::random(10),
                 'role' => 'user',
+                'verificationStatus' => 'Approved',
         ]);
         User::create([
                 'name' => 'Logistics Company',
@@ -37,6 +39,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'remember_token' => Str::random(10),
                 'role' => 'user',
+                'verificationStatus' => 'Approved',
         ]);
         // Add more default users as needed with their respective roles
     }

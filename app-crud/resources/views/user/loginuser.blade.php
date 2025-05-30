@@ -10,11 +10,17 @@
     <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css">
 </head>
-<body class="login-user-page d-flex flex-column min-vh-100">
+<body class="login-user-page d-flex flex-column min-vh-100 bg-gradient">
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-square"></i> {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
     <div class="container">
         <div class="row mt-2">
         <div class="text-center">
-            <a class="navbar-brand" href="{{route('proposal.index')}}">
+            <a class="navbar-brand" href="{{route('login')}}">
                 <img src="/images/SSB_Logo.jpg" alt="Your Logo" height="70">
             </a>
         </div>
@@ -56,6 +62,11 @@
                                     </span>
                                 @enderror
                             </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="showPassword">
+                                <label class="form-check-label" for="showPassword">Show Password</label>
+                            </div>
 
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
@@ -78,9 +89,5 @@
     <!--Include Body CDN-->
     @include('partials.bodycdn')
     <!--End of Body CDN-->
-    <script>
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    </script>
 </body>
 </html>

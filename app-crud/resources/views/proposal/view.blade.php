@@ -7,7 +7,7 @@
     @include('partials.headcdn')
     <link rel="stylesheet" href="/styles/style.css">
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light bg-gradient">
+<body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
 <!--Include Navbar Based on Role-->
   @if(Auth::user()->role ==='admin')
     @include('partials.adminnav')
@@ -94,7 +94,7 @@
         <div class="col-md-3"><h6>{{$proposal->remarks}}</h6></div>
     </div>
     @endif
-    <div class="row border p-1">
+    <div class="row border-top border-start border-end p-1">
         <div class="col-md-3"><h6 class="subject">Technical Proposal</h6></div>
         <div class="col-md-3">
             @if($proposal->pathToTP)
@@ -106,7 +106,7 @@
             @endif
         </div>
     </div>
-    <div class="row border p-1">
+    <div class="row bg-light border p-1">
         <div class="col-md-3"><h6 class="subject">Joint Measurement Sheet</h6></div>
         <div class="col-md-3">
             @if($proposal->pathToJMS)

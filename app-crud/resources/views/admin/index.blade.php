@@ -1,4 +1,3 @@
-<!-- This Document is identical to index.blade.php(proposal) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +7,9 @@
     <!--Include Head CDN-->
     @include('partials.headcdn')
     <!--End of Head CDN-->
-    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/style.css"> 
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light bg-gradient">
+<body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
   <!--Include Navbar Based on Role-->
   @if(Auth::user()->role ==='admin')
     @include('partials.adminnav')
@@ -24,14 +23,12 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
-
 <div class="container pt-2">
   <h1 class="text-center">Technical Proposal Submissions</h1>
   <div class="row">
+    <!--Start of Pending Proposal Table-->
     <div class="col mt-5 p-4 bg-white border-top rounded shadow-sm">
       <h2><i class="bi bi-hourglass-split"></i>Pending Proposals</h2>
-    <div>
-    </div>
     <div>
         <table class="table table-striped table-bordered table-hover" id="pendingTable">
           <thead>
@@ -47,7 +44,7 @@
             </tr>
           </thead>
         @foreach($proposals as $proposal)
-        @if($proposal->approvedStatus != 'Approved')
+        @if($proposal->reviewStatus == 'Not Started' || $proposal->reviewStatus == 'Under Review')
             <tr>
                 <td><a href="{{route('proposal.view', ['proposal' => $proposal])}}" class="editProposalLink"><strong>{{$proposal->projectTitle}}</strong></a></td>
                 <td>{{$proposal->created_at->format('j F Y g:i a') }}</td>
@@ -63,10 +60,10 @@
         </table>
     </div>
     </div>
+    <!--End of Pending Proposal Table-->
+    <!--Start of Approved Proposal Table-->
     <div class="col mt-5 mb-5 p-4 bg-white border-top rounded shadow-sm">
       <h2><i class="bi bi-check2-square"></i> Approved Proposals</h2>
-    <div>
-    </div>
     <div>
         <table class="table table-striped table-bordered table-hover" id="approvedTable">
           <thead>
@@ -82,7 +79,7 @@
             </tr>
           </thead>
           @foreach($proposals as $proposal)
-        @if($proposal->approvedStatus == 'Approved')
+          @if($proposal->approvedStatus == 'Approved')
             <tr>
                 <td><a href="{{route('proposal.view', ['proposal' => $proposal])}}" class="editProposalLink"><strong>{{$proposal->projectTitle}}</strong></a></td>
                 <td>{{$proposal->created_at->format('j F Y g:i a') }}</td>
@@ -98,11 +95,45 @@
         </table>
     </div>
     </div>
+    <!--End of Approved Proposal Table-->
+    <!--Start of Rejected Proposal Table-->
+    <div class="col mt-5 p-4 bg-white border-top rounded shadow-sm">
+      <h2><i class="bi bi-x-square"></i> Rejected Proposals</h2>
+    <div>
+        <table class="table table-striped table-bordered table-hover" id="rejectedTable">
+          <thead>
+            <tr>
+            <th class="tableheader text-bg-danger">Project Title</th>
+            <th class="tableheader text-bg-danger">Submitted On</th>
+            <th class="tableheader text-bg-danger">Project Number</th>
+            <th class="tableheader text-bg-danger">Region</th>
+            <th class="tableheader text-bg-danger">Prepared By</th>
+            <th class="tableheader text-bg-danger">Main Contractor</th>
+            <th class="tableheader text-bg-danger">Remarks</th>
+            </tr>
+          </thead>
+        @foreach($proposals as $proposal)
+        @if($proposal->approvedStatus == 'Rejected')
+            <tr>
+                <td><a href="{{route('proposal.view', ['proposal' => $proposal])}}" class="editProposalLink"><strong>{{$proposal->projectTitle}}</strong></a></td>
+                <td>{{$proposal->created_at->format('j F Y g:i a') }}</td>
+                <td>{{$proposal->projectNumber}}</td>
+                <td>{{$proposal->region}}</td>
+                <td>{{$proposal->preparedBy}}</td>
+                <td>{{$proposal->mainContractor}}</td>
+                <td>{{$proposal->remarks}}</td>
+            </tr>
+        @endif
+        @endforeach
+        </table>
+    </div>
+    </div>
+    <!--End of Rejected Proposal Table-->
   </div>
 </div>
 <!--Include Footer-->
 @include('partials.footer')
-<!--End of Footer-->
+<!--End of Include-->
 
 <!--Include Body CDN-->
 @include('partials.bodycdn')
@@ -113,7 +144,7 @@
                 scrollX: true,
                 order:[[1, 'desc']],
                 language: {
-                  emptyTable: "No pending Technical Proposal submissions found. All proposals are either approved or there are no pending Technical Proposal submissions yet."
+                  emptyTable: "No pending technical proposal submissions found."
                 },
                 layout: {
                     bottomStart: [
@@ -140,7 +171,7 @@
                 scrollX: true,
                 order:[[1, 'desc']],
                 language: {
-                  emptyTable: "No approved technical proposals found. Check the pending proposals section."
+                  emptyTable: "No approved technical proposal submissions found."
                 },
                 layout: {
                     bottomStart: [
@@ -155,6 +186,33 @@
                                 extend: 'pdfHtml5',
                                 className: 'btn btn-danger',
                                 title: 'Approved Proposals - ' + new Date().toLocaleDateString(),
+                            }
+                          ]
+                    },
+                    'info'
+                    ]
+                }
+            });
+            new DataTable('#rejectedTable', {
+                scrollX: true,
+                order:[[1, 'desc']],
+                language: {
+                  emptyTable: "No rejected technical proposal submissions found."
+                },
+                layout: {
+                    bottomStart: [
+                      {
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                className: 'btn btn-success me-2',
+                                title: 'Rejected Proposals - ' + new Date().toLocaleDateString(),
+
+                            },
+                            {
+                                extend: 'pdfHtml5',
+                                className: 'btn btn-danger',
+                                title: 'Rejected Proposals - ' + new Date().toLocaleDateString(),
                             }
                           ]
                     },

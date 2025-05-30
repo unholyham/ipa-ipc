@@ -39,7 +39,6 @@ class ProposalController extends Controller
         else {
             abort(403, 'Unauthorized.');
         }
-
     }
 
     public function store(Request $request){
@@ -110,31 +109,31 @@ class ProposalController extends Controller
         return view('proposal.view', ['proposal' => $proposal]);
     }
 
-    public function update(Proposal $proposal, Request $request){
-        $data = $request->validate([
-            'projectTitle' => 'required',
-            'projectNumber' => 'nullable',
-            'region' => 'required',
-            'preparedBy' => 'required',
-            'mainContractor' => 'required',
-            'reviewStatus' => 'required',
-            'approvedStatus' => 'nullable',
-            'pathToTP' => 'nullable'
-        ]);
+    // public function update(Proposal $proposal, Request $request){
+    //     $data = $request->validate([
+    //         'projectTitle' => 'required',
+    //         'projectNumber' => 'nullable',
+    //         'region' => 'required',
+    //         'preparedBy' => 'required',
+    //         'mainContractor' => 'required',
+    //         'reviewStatus' => 'required',
+    //         'approvedStatus' => 'nullable',
+    //         'pathToTP' => 'nullable'
+    //     ]);
 
-        $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
-        $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
-        $proposal->update($data);
-        return redirect(route('proposal.index'))->with('success', 'Proposal Updated Successfully');
-    }
+    //     $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
+    //     $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
+    //     $proposal->update($data);
+    //     return redirect(route('proposal.index'))->with('success', 'Proposal Updated Successfully');
+    // }
 
-    public function destroy(Proposal $proposal){
-        if ($proposal->pathToTP) {
-            Storage::delete($proposal->pathToTP);
-        }
-        $proposal->delete();
-        return redirect(route('proposal.index'))->with('success', 'Proposal Deleted Successfully');
-    }
+    // public function destroy(Proposal $proposal){
+    //     if ($proposal->pathToTP) {
+    //         Storage::delete($proposal->pathToTP);
+    //     }
+    //     $proposal->delete();
+    //     return redirect(route('proposal.index'))->with('success', 'Proposal Deleted Successfully');
+    // }
 
     public function displayTP(Proposal $proposal)
     {
@@ -232,17 +231,23 @@ class ProposalController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        $request->validate([
+        $rules = [
             'approvedStatus' => 'required|in:Approved,Rejected',
-            'remarks' => 'required',
-        ]);
+        ];
+
+        if ($request->input('approvedStatuss') === 'Rejected') {
+            $rules['remarks'] = 'required|string|max:1000';
+        }
+
+        $request->validate($rules);
 
         $newApprovedStatus = $request->input('approvedStatus');
+        $remarks = $request->input('remarks', '');
         $successMessage = '';
 
         $proposal->update([
-            'approvedStatus' => $request->input('approvedStatus'),
-            'remarks' => $request->input('remarks'),
+            'approvedStatus' => $newApprovedStatus,
+            'remarks' => $remarks,
             'reviewStatus' => 'Reviewed'
         ]);
         

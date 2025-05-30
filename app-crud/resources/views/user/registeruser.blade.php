@@ -10,11 +10,11 @@
     <!--End of Head CDN-->
     <link rel="stylesheet" href="/styles/style.css">
 </head>
-<body class="register-user-page d-flex flex-column min-vh-100">
+<body class="register-user-page d-flex flex-column min-vh-100 bg-gradient">
     <div class="container">
         <div class="row mt-2">
         <div class="text-center">
-            <a class="navbar-brand" href="{{route('proposal.index')}}">
+            <a class="navbar-brand" href="{{route('register')}}">
                 <img src="/images/SSB_Logo.jpg" alt="Your Logo" height="70">
             </a>
         </div>
@@ -72,6 +72,11 @@
                             <div class="form-floating mb-3">
                                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password">
                                 <label for="password_confirmation">Confirm Password</label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="showPassword">
+                                <label class="form-check-label" for="showPassword">Show Password</label>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="register-button-tooltip" data-bs-title="Register">Register</button>
