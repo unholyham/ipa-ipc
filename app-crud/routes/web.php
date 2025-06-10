@@ -40,9 +40,10 @@ Route::middleware('auth')->group(function () {
 
     //Admin Controller
     Route::middleware('admin')->group(function () {
-        Route::get('/admin/users/pending', [AdminController::class, 'showPendingUsers'])->name('admin.users.pending');
-        Route::get('/admin/users/pending/{user}', [AdminController::class, 'viewPendingUser'])->name('admin.users.view');
-        Route::patch('/admin/users/{user}/verify-status', [AdminController::class, 'updateVerificationStatus'])->name('admin.users.update');
+        Route::get('/admin/users', [AdminController::class, 'index'])->name('admin.users');
+        Route::get('/admin/users/{user}', [AdminController::class, 'viewUser'])->name('admin.users.view');
+        Route::patch('/admin/users/{user}/verify-status', [AdminController::class, 'updateVerificationStatus'])->name('admin.users.updateVerificationStatus');
+        Route::patch('/admin/users/{user}/account-status', [AdminController::class, 'updateAccountStatus'])->name('admin.users.updateAccountStatus');
     }); 
 });
 

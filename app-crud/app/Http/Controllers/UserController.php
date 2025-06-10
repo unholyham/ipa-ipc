@@ -31,11 +31,13 @@ class UserController extends Controller
             return back()->withErrors($validator)->withInput();
         }
         $data = $validator->validated();
-
+        
+        $data['id'] = Str::uuid();
         $data['password'] = Hash::make($request->password);
         $data['role'] = 'user';
         $data['verificationStatus'] = 'Pending';
         $data['remarks'] = null;
+        $data['accountStatus'] = 'Inactive';
 
         $user = User::create($data);
 

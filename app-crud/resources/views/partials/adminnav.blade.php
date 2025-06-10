@@ -15,7 +15,7 @@
           <a class="nav-link {{ Route::currentRouteNamed('proposal.index') ? 'active' : '' }}" href="{{route('proposal.index')}}">HOME</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ Route::currentRouteNamed('admin.users.pending') ? 'active' : '' }}" href="{{route('admin.users.pending')}}">MANAGE ACCOUNTS</a>
+          <a class="nav-link {{ Route::currentRouteNamed('admin.users') ? 'active' : '' }}" href="{{route('admin.users')}}">MANAGE ACCOUNTS</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">CONTACT US</a>

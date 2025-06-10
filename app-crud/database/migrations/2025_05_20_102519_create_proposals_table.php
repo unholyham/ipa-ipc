@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->unsignedBigInteger('ownerId');
+            $table->uuid('ownerId');
             $table->string('projectTitle');
             $table->string('projectNumber')->nullable();
             $table->string('region');

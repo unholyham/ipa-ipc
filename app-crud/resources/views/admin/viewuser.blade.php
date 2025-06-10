@@ -41,14 +41,18 @@
     <div class="row border p-1">
         <div class="col-md-3"><h6 class="subject">Verification Status</h6></div>
         <div class="col-md-3">
-            <h6>{{$user->verificationStatus}}</h6>
+            <h6>
+                <span class="badge rounded-pill {{ $user->verificationStatus == 'Approved' ? 'text-bg-success' : 'text-bg-danger' }}">
+                    {{$user->verificationStatus}}
+                </span>
+            </h6>
             {{--  Conditional buttons for Approve Status --}}
             @if(Auth::user()->role === 'admin' && $user->verificationStatus === 'Pending')
                 <button type="button" class="btn btn-sm btn-success text-white"
                         data-bs-toggle="modal" data-bs-target="#confirmApproveModal">
                     Approve
                 </button>
-                <form id="approveForm" action="{{ route('admin.users.update', $user->id) }}" method="POST" style="display: none;">
+                <form id="approveForm" action="{{ route('admin.users.updateVerificationStatus', $user->id) }}" method="POST" style="display: none;">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="verificationStatus" value="Approved">
@@ -57,7 +61,7 @@
                         data-bs-toggle="modal" data-bs-target="#confirmRejectModal">
                     Reject
                 </button>
-                <form id="rejectForm" action="{{ route('admin.users.update', $user->id) }}" method="POST" style="display: none;">
+                <form id="rejectForm" action="{{ route('admin.users.updateVerificationStatus', $user->id) }}" method="POST" style="display: none;">
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="verificationStatus" value="Rejected">
@@ -65,6 +69,33 @@
             @endif
         </div>
     </div>
+    <div class="row bg-light border p-1">
+        <div class="col-md-3"><h6 class="subject">Account Status</h6></div>
+        <div class="col-md-3">
+            <h6>
+                <span class="badge rounded-pill {{ $user->accountStatus == 'Active' ? 'text-bg-success' : 'text-bg-danger' }}">
+                    {{$user->accountStatus}}
+                </span>
+            </h6>
+            {{-- Conditional button for Activate/Deactivate Account Status --}}
+            @if(Auth::user()->role === 'admin' && $user->verificationStatus === 'Approved')
+                <form action="{{ route('admin.users.updateAccountStatus', $user->id) }}" method="POST" class="mt-2">
+                    @csrf
+                    @method('PATCH')
+                    @if($user->accountStatus === 'Active')
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Deactivate Account
+                        </button>
+                    @else
+                        <button type="submit" class="btn btn-sm btn-success">
+                            Activate Account
+                        </button>
+                    @endif
+                </form>
+            @endif
+        </div>
+    </div>
+    {{--Remarks Should only be visible if verification status is rejected--}}
     @if($user->verificationStatus === 'Rejected')
     <div class="row bg-light border p-1">
         <div class="col-md-3"><h6 class="subject">Remarks</h6></div>

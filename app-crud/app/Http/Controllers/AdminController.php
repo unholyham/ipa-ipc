@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
-    public function showPendingUsers() {
-        $pendingUsers = User::where('verificationStatus', 'Pending')->get();
-        return view('admin.verifyregistration', ['pendingUsers' => $pendingUsers]);
+    public function index() {
+        $users = User::all();
+        return view('admin.viewallusers', ['users' => $users]);
     }
 
-    public function viewPendingUser(User $user) {
-        return view('admin.viewpendinguser', ['user' => $user]);
+    public function viewUser(User $user) {
+        return view('admin.viewuser', ['user' => $user]);
     }
 
     public function updateVerificationStatus(Request $request, User $user) {
@@ -45,10 +45,18 @@ class AdminController extends Controller
         // If 'remarks' is not provided (e.g., for 'Approved' status), default to an empty string
         $remarks = $request->input('remarks', '');
 
+        $newAccountStatus = $user->accountStatus;
+
+        if ($newVerificationStatus === 'Approved') {
+            $newAccountStatus = 'Active';
+        } else {
+            $newAccountStatus = 'Inactive';
+        }
         // Update the user's verification status and remarks in the database
         $user->update([
             'verificationStatus' => $newVerificationStatus, // Use the variable for clarity
-            'remarks' => $remarks
+            'remarks' => $remarks,
+            'accountStatus' => $newAccountStatus,
         ]);
 
         // Send email based on the new verification status
@@ -75,5 +83,21 @@ class AdminController extends Controller
 
         // Redirect back with a success message
         return back()->with('success', 'Verification status updated successfully.');
+    }
+
+    public function updateAccountStatus(Request $request, User $user) {
+       // Ensure only admins can perform this action
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized.');
+        }
+        
+        if ($user->verificationStatus !== 'Approved') {
+            return back()->with('error', 'Account status can only be toggled for approved accounts');
+        } 
+
+        $newStatus = ($user->accountStatus === 'Active') ? 'Inactive' : 'Active';
+        $user->update(['accountStatus' => $newStatus]);
+
+        return back()->with('success', 'User account status updated to ' . $newStatus . '.');
     }
 }

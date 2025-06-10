@@ -32,8 +32,15 @@ class AuthController extends Controller
 
             $user = Auth::user();
             if ($user->verificationStatus === 'Approved') {
-                $request->session()->regenerate();
-                return redirect()->route('proposal.index');
+                if ($user->accountStatus === 'Active') {
+                    $request->session()->regenerate();
+                    return redirect()->route('proposal.index');
+                } else {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                    return back()->withErrors(['email' => 'Your account is currently inactive. Please contact support.'])->withInput();
+                }
             } else {
                 Auth::logout();
                 $request->session()->invalidate();

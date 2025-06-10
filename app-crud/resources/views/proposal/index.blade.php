@@ -61,7 +61,9 @@
     </div>
     </div>
     <!--End of Pending Proposal Table-->
+  </div>
     <!--Start of Approved Proposal Table-->
+    <div class="row">
     <div class="col mt-5 mb-5 p-4 bg-white border-top rounded shadow-sm">
       <h2><i class="bi bi-check2-square"></i> Approved Proposals</h2>
     <div>
@@ -95,8 +97,10 @@
         </table>
     </div>
     </div>
+  </div>
     <!--End of Approved Proposal Table-->
     <!--Start of Rejected Proposal Table-->
+    <div class="row">
     <div class="col mt-5 p-4 bg-white border-top rounded shadow-sm">
       <h2><i class="bi bi-x-square"></i> Rejected Proposals</h2>
     <div>
@@ -126,6 +130,7 @@
         @endif
         @endforeach
         </table>
+    </div>
     </div>
     </div>
     <!--End of Rejected Proposal Table-->

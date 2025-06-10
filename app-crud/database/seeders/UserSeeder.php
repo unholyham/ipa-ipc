@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
+            'id' => Str::uuid(),
             'name' => 'Admin',
             'email' => 'admin@email.com',
             'email_verified_at' => null,
@@ -22,8 +23,10 @@ class UserSeeder extends Seeder
             'remember_token' => Str::random(10),
             'role' => 'admin',
             'verificationStatus' => 'Approved',
+            'accountStatus' => 'Active',
         ]);
         User::create([
+                'id' => Str::uuid(),
                 'name' => 'Contractor Company',
                 'email' => 'contractorcompany@email.com',
                 'email_verified_at' => null,
@@ -31,8 +34,10 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
                 'role' => 'user',
                 'verificationStatus' => 'Approved',
+                'accountStatus' => 'Active',
         ]);
         User::create([
+                'id' => Str::uuid(),
                 'name' => 'Logistics Company',
                 'email' => 'logisticscompany@email.com',
                 'email_verified_at' => null,
@@ -40,6 +45,7 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
                 'role' => 'user',
                 'verificationStatus' => 'Approved',
+                'accountStatus' => 'Active',
         ]);
         // Add more default users as needed with their respective roles
     }

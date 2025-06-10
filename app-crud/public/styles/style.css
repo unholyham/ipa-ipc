@@ -46,7 +46,7 @@
     font-size: 0.8rem;
   }
 
-  .editProposalLink {
+  .editProposalLink, .viewUserLink {
     text-decoration: none;
   }
 
