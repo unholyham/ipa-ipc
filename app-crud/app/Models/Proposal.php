@@ -2,20 +2,24 @@
 
 namespace App\Models;
 
+use App\Models\Account;
+use App\Models\Company;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\User;
 
 
 class Proposal extends Model
 {
     use HasFactory, HasUuids;
+
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
-        'id',
-        'ownerId',
-        'projectTitle',
-        'projectNumber',
+        'ownerID',
+        'project',
         'region',
         'preparedBy',
         'mainContractor',
@@ -26,11 +30,25 @@ class Proposal extends Model
         'pathToJMS'
     ];
 
-    protected $keyType = 'string';
-
-    public $incrementing = false;
+    protected static function booted(): void
+    {
+        static::creating(function (Proposal $proposal) {
+            // Generate a UUID for Proposal if it's not already set
+            if (empty($proposal->id)) {
+                $proposal->id = (string) Str::uuid();
+            }
+        });
+    }
 
     public function owner() {
-        return $this->belongsTo(User::class, 'ownerId');
+        return $this->belongsTo(Account::class, 'ownerID', 'accountID');
+    }
+
+    public function getProject() {
+        return $this->belongsTo(Project::class, 'project', 'projectID');
+    }
+
+    public function company() {
+        return $this->belongsTo(Company::class, 'mainContractor', 'companyID');
     }
 }

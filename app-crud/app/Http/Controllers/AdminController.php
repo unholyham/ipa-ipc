@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Account;
 use App\Mail\AccountApprovedMail;
 use App\Mail\AccountRejectedMail;
 use Illuminate\Http\Request;
@@ -13,28 +13,29 @@ use Illuminate\Support\Facades\Mail;
 class AdminController extends Controller
 {
     public function index() {
-        $users = User::all();
-        return view('admin.viewallusers', ['users' => $users]);
+        $accounts = Account::with(['role', 'company'])->get();
+        return view('admin.viewallusers', ['accounts' => $accounts]);
     }
 
-    public function viewUser(User $user) {
-        return view('admin.viewuser', ['user' => $user]);
+    public function viewUser(Account $account) {
+        $account->load(['role', 'company']);
+        return view('admin.viewuser', ['account' => $account]);
     }
 
-    public function updateVerificationStatus(Request $request, User $user) {
+    public function updateVerificationStatus(Request $request, Account $account) {
         // Ensure only admins can perform this action
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Unauthorized.');
+        if (!Auth::check() || !Auth::user()->role || Auth::user()->role->roleName !== 'admin') {
+            abort(403, 'Unauthorized. Only Admins can perform this action.');
         }
 
         // Define base validation rules
         $rules = [
-            'verificationStatus' => 'required|in:Approved,Rejected',
+            'verificationStatus' => 'required|in:verified,rejected',
         ];
 
         // Conditionally add 'remarks' validation rule ONLY if status is 'Rejected'
-        if ($request->input('verificationStatus') === 'Rejected') {
-            $rules['remarks'] = 'required|string|max:1000'; // Added max length for remarks
+        if ($request->input('verificationStatus') === 'rejected') {
+            $rules['verificationRejectRemarks'] = 'required|string|max:1000'; // Added max length for remarks
         }
 
         // Validate the request based on the defined rules
@@ -43,60 +44,57 @@ class AdminController extends Controller
         // Retrieve the new verification status and remarks from the request
         $newVerificationStatus = $request->input('verificationStatus');
         // If 'remarks' is not provided (e.g., for 'Approved' status), default to an empty string
-        $remarks = $request->input('remarks', '');
+        $verificationRejectRemarks = $request->input('verificationRejectRemarks', null);
 
-        $newAccountStatus = $user->accountStatus;
+        $newAccountStatus = $account->accountStatus;
 
-        if ($newVerificationStatus === 'Approved') {
-            $newAccountStatus = 'Active';
+        if ($newVerificationStatus === 'verified') {
+            $newAccountStatus = 'active';
         } else {
-            $newAccountStatus = 'Inactive';
+            $newAccountStatus = 'inactive';
         }
         // Update the user's verification status and remarks in the database
-        $user->update([
+        $account->update([
             'verificationStatus' => $newVerificationStatus, // Use the variable for clarity
-            'remarks' => $remarks,
+            'verificationRejectRemarks' => $verificationRejectRemarks,
             'accountStatus' => $newAccountStatus,
         ]);
 
         // Send email based on the new verification status
         try {
-            if ($newVerificationStatus === 'Approved') {
+            if ($newVerificationStatus === 'verified') {
                 // Send Approval Email to applicant
-                Mail::to($user->email)->send(new AccountApprovedMail($user));
-                Log::info('Account approved email sent to: ' . $user->email);
-                //Send Verification Success Email to MainContractor
-                //Mail::to(config('mail.from.address'))->send(new AccountApprovedMail($user));
+                Mail::to($account->email)->send(new AccountApprovedMail($account));
+                Log::info('Account verified email sent to: ' . $account->email);
     
-            } elseif ($newVerificationStatus === 'Rejected') {
+            } elseif ($newVerificationStatus === 'rejected') {
                 // Send Rejection Email to applicant, including the remarks
-                Mail::to($user->email)->send(new AccountRejectedMail($user, $remarks));
-                Log::info('Account rejected email sent to: ' . $user->email . ' with remarks: ' . $remarks);
-                //Send Verification Rejected Email to MainContractor
-                //Code Here
-            }   //Mail::to(config('mail.from.address'))->send(new AccountRejectedMail($user));
+                Mail::to($account->email)->send(new AccountRejectedMail($account, $verificationRejectRemarks));
+                Log::info('Account rejected email sent to: ' . $account->email . ' with remarks: ' . $verificationRejectRemarks);
+
+            }   
             
         } catch (\Exception $e) {
             // Log any errors that occur during email sending
-            Log::error('Failed to send account verification email to ' . $user->email . ': ' . $e->getMessage());
+            Log::error('Failed to send account verification email to ' . $account->email . ': ' . $e->getMessage());
         }
 
         // Redirect back with a success message
         return back()->with('success', 'Verification status updated successfully.');
     }
 
-    public function updateAccountStatus(Request $request, User $user) {
+    public function updateAccountStatus(Request $request, Account $account) {
        // Ensure only admins can perform this action
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Unauthorized.');
+        if (!Auth::check() || !Auth::user()->role || Auth::user()->role->roleName !== 'admin') {
+            abort(403, 'Unauthorized. Only Administrators can perform this action.');
         }
         
-        if ($user->verificationStatus !== 'Approved') {
+        if ($account->verificationStatus !== 'verified') {
             return back()->with('error', 'Account status can only be toggled for approved accounts');
         } 
 
-        $newStatus = ($user->accountStatus === 'Active') ? 'Inactive' : 'Active';
-        $user->update(['accountStatus' => $newStatus]);
+        $newStatus = ($account->accountStatus === 'active') ? 'inactive' : 'active';
+        $account->update(['accountStatus' => $newStatus]);
 
         return back()->with('success', 'User account status updated to ' . $newStatus . '.');
     }

@@ -11,7 +11,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
   <!--Include Navbar Based on Role-->
-  @if(Auth::user()->role ==='admin')
+  @if(Auth::user()->role->roleName === 'admin')
     @include('partials.adminnav')
   @else
     @include('partials.usernav')
@@ -41,14 +41,14 @@
             <th class="tableheader text-bg-warning">Verification Status</th>
             </tr>
           </thead>
-        @foreach($users as $user)
-        @if($user->verificationStatus == 'Pending')
+        @foreach($accounts as $account)
+        @if($account->verificationStatus == 'pending')
             <tr>
-                <td><a href="{{route('admin.users.view', ['user' => $user])}}" class="viewUserLink"><strong>{{$user->name}}</strong></a></td>
-                <td>{{$user->created_at->format('j F Y g:i a') }}</td>
-                <td>{{$user->email}}</td>
-                <td>{{$user->role}}</td>
-                <td>{{$user->verificationStatus}}</td>
+                <td><a href="{{route('admin.users.view', ['account' => $account])}}" class="viewUserLink"><strong>{{$account->employeeName}}</strong></a></td>
+                <td>{{$account->created_at->format('j F Y g:i a') }}</td>
+                <td>{{$account->email}}</td>
+                <td>{{$account->role->roleName}}</td>
+                <td>{{$account->verificationStatus}}</td>
             </tr>
         @endif
         @endforeach
@@ -58,12 +58,12 @@
   </div>
   <!--End of Pending User Accounts Table-->
 
-  <!--Start of Approved User Accounts Table-->
+  <!--Start of Verified User Accounts Table-->
   <div class="row">
     <div class="col mt-5 p-4 bg-white border-top rounded shadow-sm">
-      <h2><i class="bi bi-check2-square"></i> Approved User Accounts</h2>
+      <h2><i class="bi bi-check2-square"></i> Verified User Accounts</h2>
     <div>
-        <table class="table table-striped table-bordered table-hover" id="approvedUsersTable">
+        <table class="table table-striped table-bordered table-hover" id="verifiedUsersTable">
           <thead>
             <tr>
             <th class="tableheader text-bg-success">Name</th>
@@ -73,14 +73,14 @@
             <th class="tableheader text-bg-success">Verification Status</th>
             </tr>
           </thead>
-          @foreach($users as $user)
-          @if($user->verificationStatus == 'Approved' && $user->role != 'admin')
+          @foreach($accounts as $account)
+          @if($account->verificationStatus == 'verified' && $account->role->roleName != 'admin')
             <tr>
-                <td><a href="{{route('admin.users.view', ['user' => $user])}}" class="viewUserLink"><strong>{{$user->name}}</strong></a></td>
-                <td>{{$user->created_at->format('j F Y g:i a') }}</td>
-                <td>{{$user->email}}</td>
-                <td>{{$user->role}}</td>
-                <td>{{$user->verificationStatus}}</td>
+                <td><a href="{{route('admin.users.view', ['account' => $account])}}" class="viewUserLink"><strong>{{$account->employeeName}}</strong></a></td>
+                <td>{{$account->created_at->format('j F Y g:i a') }}</td>
+                <td>{{$account->email}}</td>
+                <td>{{$account->role->roleName}}</td>
+                <td>{{$account->verificationStatus}}</td>
             </tr>
         @endif
         @endforeach
@@ -88,7 +88,7 @@
     </div>
     </div>
   </div>
-  <!--End of Approved User Accounts Table-->
+  <!--End of Verified User Accounts Table-->
 
   <!--Start of Rejected User Accounts-->
   <div class="row">
@@ -106,15 +106,15 @@
             <th class="tableheader text-bg-danger">Remarks</th>
             </tr>
           </thead>
-        @foreach($users as $user)
-        @if($user->verificationStatus == 'Rejected')
+        @foreach($accounts as $account)
+        @if($account->verificationStatus == 'rejected')
             <tr>
-                <td><a href="{{route('admin.users.view', ['user' => $user])}}" class="viewUserLink"><strong>{{$user->name}}</strong></a></td>
-                <td>{{$user->created_at->format('j F Y g:i a') }}</td>
-                <td>{{$user->email}}</td>
-                <td>{{$user->role}}</td>
-                <td>{{$user->verificationStatus}}</td>
-                <td>{{$user->remarks}}</td>
+                <td><a href="{{route('admin.users.view', ['account' => $account])}}" class="viewUserLink"><strong>{{$account->employeeName}}</strong></a></td>
+                <td>{{$account->created_at->format('j F Y g:i a') }}</td>
+                <td>{{$account->email}}</td>
+                <td>{{$account->role->roleName}}</td>
+                <td>{{$account->verificationStatus}}</td>
+                <td>{{$account->remarks}}</td>
             </tr>
         @endif
         @endforeach
@@ -165,11 +165,11 @@
         } );
 
         $(document).ready( function () {
-            new DataTable('#approvedUsersTable', {
+            new DataTable('#verifiedUsersTable', {
                 scrollX: true,
                 order:[[1, 'desc']],
                 language: {
-                  emptyTable: "No approved user accounts found."
+                  emptyTable: "No verifed user accounts found."
                 },
                 layout: {
                     bottomStart: [
@@ -178,13 +178,13 @@
                             {
                                 extend: 'excelHtml5',
                                 className: 'btn btn-success me-2',
-                                title: 'Approved User Accounts - ' + new Date().toLocaleDateString(),
+                                title: 'Verified User Accounts - ' + new Date().toLocaleDateString(),
 
                             },
                             {
                                 extend: 'pdfHtml5',
                                 className: 'btn btn-danger',
-                                title: 'Approved User Accounts - ' + new Date().toLocaleDateString(),
+                                title: 'Verified User Accounts - ' + new Date().toLocaleDateString(),
                             }
                           ]
                     },

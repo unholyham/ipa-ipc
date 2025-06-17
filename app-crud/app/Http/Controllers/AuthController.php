@@ -31,8 +31,8 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->has('remember'))) {
 
             $user = Auth::user();
-            if ($user->verificationStatus === 'Approved') {
-                if ($user->accountStatus === 'Active') {
+            if ($user->verificationStatus === 'verified') {
+                if ($user->accountStatus === 'active') {
                     $request->session()->regenerate();
                     return redirect()->route('proposal.index');
                 } else {

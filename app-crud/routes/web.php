@@ -5,7 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\NotificationController;
 
@@ -16,8 +19,8 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     //Proposal Controller
     Route::get('/proposal', [ProposalController::class, 'index'])->name('proposal.index');
-    Route::get('/proposal/create', [ProposalController::class, 'create'])->name('proposal.create');
-    Route::post('/proposal', [ProposalController::class, 'store'])->name('proposal.store');
+    Route::get('/proposal/create', [ProposalController::class, 'showProposalForm'])->name('proposal.create');
+    Route::post('/proposal/create', [ProposalController::class, 'store'])->name('proposal.store');
     Route::get('/proposal/{proposal}', [ProposalController::class, 'view'])->name('proposal.view');
     Route::put('/proposal/{proposal}/update', [ProposalController::class, 'update'])->name('proposal.update');
     Route::delete('/proposal/{proposal}/destroy', [ProposalController::class, 'destroy'])->name('proposal.destroy');
@@ -28,10 +31,20 @@ Route::middleware('auth')->group(function () {
     Route::patch('/proposal/{proposal}/review-status', [ProposalController::class, 'updateReviewStatus'])->name('proposal.updateReviewStatus');
     Route::patch('/proposal/{proposal}/approve-status', [ProposalController::class, 'updateApprovedStatus'])->name('proposal.updateApprovedStatus');
     
+    //Company Controller
+    Route::get('/companies', [CompanyController::class, 'index'])->name('company.index');
+    Route::post('/company/register', [CompanyController::class, 'store'])->name('company.store');
+    Route::get('/company/register', [CompanyController::class, 'showCompanyForm'])->name('company.register');
+    Route::get('/company/{company}', [CompanyController::class, 'viewCompany'])->name('company.view');
+
+    //Project Controller
+    Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
+    Route::post('/project/create', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('/project/create', [ProjectController::class, 'showProjectForm'])->name('project.create');
+    Route::get('/project/{project}', [ProjectController::class, 'viewProject'])->name('project.view');
+
     //Profile Controller
     Route::get('/profile', [ProfileController::class, 'showProfilePage'])->name('profile.view');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     //Notification Controller
     Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])->name('notifications.unread');
@@ -41,15 +54,15 @@ Route::middleware('auth')->group(function () {
     //Admin Controller
     Route::middleware('admin')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'index'])->name('admin.users');
-        Route::get('/admin/users/{user}', [AdminController::class, 'viewUser'])->name('admin.users.view');
-        Route::patch('/admin/users/{user}/verify-status', [AdminController::class, 'updateVerificationStatus'])->name('admin.users.updateVerificationStatus');
-        Route::patch('/admin/users/{user}/account-status', [AdminController::class, 'updateAccountStatus'])->name('admin.users.updateAccountStatus');
+        Route::get('/admin/users/{account}', [AdminController::class, 'viewUser'])->name('admin.users.view');
+        Route::patch('/admin/users/{account}/verify-status', [AdminController::class, 'updateVerificationStatus'])->name('admin.users.updateVerificationStatus');
+        Route::patch('/admin/users/{account}/account-status', [AdminController::class, 'updateAccountStatus'])->name('admin.users.updateAccountStatus');
     }); 
 });
 
-//User Controller
-Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [UserController::class, 'register'])->name('user.store');
+//Account Controller
+Route::get('/register', [AccountController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [AccountController::class, 'store'])->name('user.store');
 
 //Auth Controller
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

@@ -42,7 +42,7 @@ class ProposalRejectedNotification extends Notification
     {
         return [
             'title' => 'Proposal Rejected',
-            'message' => 'Your proposal <strong>"' . $this->proposal->projectTitle . '"</strong> has been rejected',
+            'message' => 'Your proposal <strong>"' . $this->proposal->getProject->projectTitle . '"</strong> has been rejected',
             'proposal_id' => $this->proposal->id,
             'link' => route('proposal.view', $this->proposal->id),
         ];

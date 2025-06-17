@@ -1,81 +1,126 @@
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-  }
-  
-  html{
-    font-size: 100%;
-  }
-  
-  body{
-      font-weight: 400;
-      font-family: Montserrat, 'Times New Roman', Arial;
-      width: 100%;
-      font-size: 12px;
-      overflow-x: hidden;
-  }
+}
 
-.navbar{
-    background: #3170B6;
+html {
+    font-size: 100%;
+}
+
+body {
+    font-weight: 400;
+    font-family: Montserrat, "Times New Roman", Arial;
+    width: 100%;
+    font-size: 12px;
+    overflow-x: hidden;
+}
+
+.navbar {
+    background: #3170b6;
     font-size: 1.5em;
     font-weight: 600;
     border-bottom: 2px solid black;
-  }
+}
 
-  .profile_link {
-    text-decoration: none;
-  }
-
-  .nav_icon {
+.nav_icon {
     border-radius: 0;
-  }
+}
 
-  #toolbar_nav {
+#toolbar_nav {
     background-color: #5f97d4;
     border-bottom: 2px solid black;
-  }
+}
 
-  form{
+form {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-  }
+}
 
-  .state_option {
+.state_option {
     font-size: 0.8rem;
-  }
+}
 
-  .editProposalLink, .viewUserLink {
+.editProposalLink,
+.viewUserLink,
+.profileLink,
+.viewCompanyLink,
+.viewProjectLink {
     text-decoration: none;
-  }
+}
 
 #tp_table_info {
-  background: #3170B6;
+    background: #3170b6;
 }
 
 .subject {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .attachment_link {
-  text-decoration: none;
-  --bs-icon-link-transform: translate3d(0, -.125rem, 0);
+    text-decoration: none;
+    --bs-icon-link-transform: translate3d(0, -0.125rem, 0);
 }
 
-.login-user-page, .register-user-page {
-  background: #3170B6;
+.login-user-page,
+.register-user-page {
+    background: #3170b6;
 }
 
-.login-button-tooltip, .register-button-tooltip {
-  --bs-tooltip-bg: #343a40;
+.login-button-tooltip,
+.register-button-tooltip {
+    --bs-tooltip-bg: #343a40;
 }
 
 footer {
-  background-color: #3170B6;
+    background-color: #3170b6;
 }
 /*Datatable tablehead */
 .dt-scroll-head {
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/*Fix Form Floating and Select2 */
+.form-floating > .select2-container {
+    height: calc(3.5rem + 2px);
+    line-height: 1.25;
+    width: 100% !important;
+}
+
+.form-floating > .select2-container .select2-selection--single {
+    height: 100%; 
+    padding: 1rem 0.75rem;
+    border-radius: 0.5rem; 
+    border: 1px solid #d1d5db;
+    transition: all 0.15s ease-in-out;
+    background-color: transparent;
+}
+
+.form-floating > .select2-container .select2-selection__rendered {
+    margin-top: 0.6rem; 
+    margin-left: 0.25rem; 
+    padding: 0;
+    line-height: 1.25;
+    color: #4b5563;
+    font-size: 1rem; 
+}
+
+.form-floating > label {
+    padding: 1rem 0.75rem;
+    line-height: 1.25;
+    z-index: 2; 
+    pointer-events: none;
+    transform-origin: 0 0;
+    transition: opacity .15s ease-in-out, transform .15s ease-in-out;
+}
+
+.form-floating > label.active-label {
+    opacity: .65;
+    transform: scale(.85) translateY(-.5rem) translateX(.15rem);
+}
+
+.floating-select-label { 
+    z-index: 1000; 
 }

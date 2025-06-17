@@ -2,59 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
+use App\Models\Company;
+use App\Models\Project;
 use App\Models\Proposal;
-use App\Models\User;
-use App\Mail\ProposalUnderReview;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Mail\ProposalApproved;
 use App\Mail\ProposalRejected;
-use App\Notifications\ProposalUnderReviewNotification;
-use App\Notifications\ProposalApprovedNotification;
-use App\Notifications\ProposalRejectedNotification;
-use App\Notifications\NewProposalSubmittedNotification;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+//use App\Imports\ProposalImport; 
+use App\Mail\ProposalUnderReview;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use App\Notifications\ProposalApprovedNotification;
+use App\Notifications\ProposalRejectedNotification;
+use App\Notifications\ProposalUnderReviewNotification;
+use App\Notifications\NewProposalSubmittedNotification;
 
 class ProposalController extends Controller
 {
     public function index(){
-        if (auth()->user()->role === 'admin') {
+        if (Auth::user()->role->roleName === 'admin') {
             // If admin, fetch all proposals
-            $proposals = Proposal::all();
+            $proposals = Proposal::with(['owner', 'getProject', 'company'])->get();
             return view('proposal.index', ['proposals' => $proposals]);
         } else {
             // If not admin, fetch only the user's proposals
-            $proposals = Proposal::where('ownerId', auth()->id())->get();
+            $proposals = Proposal::with(['owner', 'getProject', 'company'])->where('ownerID', Auth::id())->get();
             return view('proposal.index', ['proposals' => $proposals]);
         }
     }
 
-    public function create(){
-        if (auth()->user()->role !== 'admin') {
-            return view('proposal.create');
-        }
-        else {
-            abort(403, 'Unauthorized.');
-        }
+    public function showProposalForm(){
+        $companies = Company::all();
+        $projects = Project::all();
+        return view('proposal.create', 
+        [
+            'companies' => $companies,
+            'projects' => $projects,
+        ]);
+                    
     }
 
     public function store(Request $request){
-        if (auth()->user()->role !== 'admin') {
+        if (Auth::user()->role->roleName !== 'admin') {
             
         $validator = Validator::make($request->all(),[
-            'projectTitle' => 'required|unique:proposals',
-            'projectNumber' => 'nullable|unique:proposals',
-            'region' => 'required',
-            'preparedBy' => 'required',
-            'mainContractor' => 'required',
-            'reviewStatus' => 'nullable',
-            'approvedStatus' => 'nullable',
-            'remarks' => 'nullable',
-            'pathToTP' => 'nullable|file|mimes:pdf,doc,docx|max:61440',
-            'pathToJMS' => 'nullable|file|mimes:pdf,doc,docx|max:61440',
+            'project' => ['required', 'uuid', 'exists:projects,projectID'],
+            'region' => ['required'],
+            'preparedBy' => ['required'],
+            'mainContractor' => ['required', 'uuid', 'exists:companies,companyID'],
+            'reviewStatus' => ['nullable'],
+            'approvedStatus' => ['nullable'],
+            'remarks' => ['nullable'],
+            'pathToTP' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:61440'],
+            'pathToJMS' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:61440'],
+        ], [
+            'project.required' => 'Please select the project',
+            'region.required' => 'Please select a region',
+            'preparedBy.required' => 'Please provide the name of the preparer',
+            'mainContractor.required' => 'Please select the main contractor',
         ]);
 
         if ($validator->fails()) {
@@ -63,18 +74,18 @@ class ProposalController extends Controller
 
         $data = $validator->validated(); // Get the validated data
 
-        $data['id'] = Str::uuid();
-        $data['ownerId'] = auth()->id();
+        $data['ownerID'] = Auth::id();
         $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
         $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
         $data['remarks'] = $data['remarks'] ?? null;
         $data['pathToTP'] = $data['pathToTP'] ?? null;
         $data['pathToJMS'] = $data['pathToJMS'] ?? null;
 
+        $project = Project::find($data['project']);
+        $projectTitle = $project->projectTitle;
         if ($request->hasFile('pathToTP')) {
             $file = $request->file('pathToTP');
             $extension = $file->getClientOriginalExtension();
-            $projectTitle = $data['projectTitle'];
             $dateSubmitted = now()->format('Ymd');
             $filename = $dateSubmitted . '_' . 'TP'. '_' . $projectTitle . '.' . $extension;
             $path = $file->storeAs('public/Technical_Proposal_Uploads', $filename);
@@ -84,16 +95,17 @@ class ProposalController extends Controller
         if ($request->hasFile('pathToJMS')) {
             $file = $request->file('pathToJMS');
             $extension = $file->getClientOriginalExtension();
-            $projectTitle = $data['projectTitle'];
             $dateSubmitted = now()->format('Ymd');
             $filename = $dateSubmitted . '_' . 'JMS'. '_' . $projectTitle . '.' . $extension;
             $path = $file->storeAs('public/Joint_Measurement_Sheet_Uploads', $filename);
             $data['pathToJMS'] = $path;
         }
 
-        $newProposal = Proposal::create($data); // Use the $data array containing all validated fields
+        $newProposal = Proposal::create($data); 
 
-        $admins = User::where('role', 'admin')->get();
+        $admins = Account::whereHas('role', function ($query) {
+                $query->where('roleName', 'admin');
+            })->get();
 
         foreach ($admins as $admin) {
             $admin->notify(new NewProposalSubmittedNotification($newProposal));
@@ -106,34 +118,9 @@ class ProposalController extends Controller
 }
 
     public function view(Proposal $proposal){
+        $proposal->load(['owner', 'getProject', 'company']);
         return view('proposal.view', ['proposal' => $proposal]);
     }
-
-    // public function update(Proposal $proposal, Request $request){
-    //     $data = $request->validate([
-    //         'projectTitle' => 'required',
-    //         'projectNumber' => 'nullable',
-    //         'region' => 'required',
-    //         'preparedBy' => 'required',
-    //         'mainContractor' => 'required',
-    //         'reviewStatus' => 'required',
-    //         'approvedStatus' => 'nullable',
-    //         'pathToTP' => 'nullable'
-    //     ]);
-
-    //     $data['reviewStatus'] = $data['reviewStatus'] ?? 'Not Started';
-    //     $data['approvedStatus'] = $data['approvedStatus'] ?? 'Not Started';
-    //     $proposal->update($data);
-    //     return redirect(route('proposal.index'))->with('success', 'Proposal Updated Successfully');
-    // }
-
-    // public function destroy(Proposal $proposal){
-    //     if ($proposal->pathToTP) {
-    //         Storage::delete($proposal->pathToTP);
-    //     }
-    //     $proposal->delete();
-    //     return redirect(route('proposal.index'))->with('success', 'Proposal Deleted Successfully');
-    // }
 
     public function displayTP(Proposal $proposal)
     {
@@ -199,7 +186,7 @@ class ProposalController extends Controller
 
     public function updateReviewStatus(Request $request, Proposal $proposal)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (Auth::user()->role->roleName !== 'admin') {
             abort(403, 'Unauthorized.');
         }
 
@@ -227,7 +214,7 @@ class ProposalController extends Controller
 
     public function updateApprovedStatus(Request $request, Proposal $proposal)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (Auth::user()->role->roleName !== 'admin') {
             abort(403, 'Unauthorized.');
         }
 
@@ -235,7 +222,7 @@ class ProposalController extends Controller
             'approvedStatus' => 'required|in:Approved,Rejected',
         ];
 
-        if ($request->input('approvedStatuss') === 'Rejected') {
+        if ($request->input('approvedStatus') === 'Rejected') {
             $rules['remarks'] = 'required|string|max:1000';
         }
 

@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('ownerId');
-            $table->string('projectTitle');
-            $table->string('projectNumber')->nullable();
+            $table->uuid('ownerID');
+            $table->uuid('project');
             $table->string('region');
             $table->string('preparedBy');
-            $table->string('mainContractor');
+            $table->uuid('mainContractor');
             $table->string('reviewStatus')->nullable();
             $table->string('approvedStatus')->nullable();
             $table->string('remarks')->nullable();
@@ -26,7 +25,9 @@ return new class extends Migration
             $table->string('pathToJMS')->nullable();
             $table->timestamps();
 
-            $table->foreign('ownerId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('ownerID')->references('accountID')->on('accounts')->onDelete('cascade');
+            $table->foreign('project')->references('projectID')->on('projects')->onDelete('cascade');
+            $table->foreign('mainContractor')->references('companyID')->on('companies')->onDelete('cascade');
         });
     }
 
@@ -36,8 +37,17 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('proposals', function (Blueprint $table) {
-            $table->dropForeign(['ownerId']); // Drop the foreign key first
-            $table->dropColumn('ownerId');       // Then drop the column
+            //Drop Foreign Keys
+            $table->dropForeign(['ownerID']); 
+            $table->dropForeign(['project']);
+            $table->dropForeign(['mainContractor']);
+            
+            
+
+            //Drop Columns
+            $table->dropColumn('ownerID');
+            $table->dropColumn('project');
+            $table->dropColumn('mainContractor');
         });
         Schema::dropIfExists('proposals');
     }

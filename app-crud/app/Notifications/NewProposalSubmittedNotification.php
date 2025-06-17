@@ -39,7 +39,7 @@ class NewProposalSubmittedNotification extends Notification
     {
         return [
             'title' => 'New Proposal Submitted',
-            'message' => 'A new proposal titled "<strong>' . $this->proposal->projectTitle . '</strong>" has been submitted by <strong>' . $this->proposal->owner->name . '</strong>.',
+            'message' => 'A new proposal titled "<strong>' . $this->proposal->getProject->projectTitle . '</strong>" has been submitted by <strong>' . $this->proposal->owner->employeeName . '</strong>.',
             'proposal_id' => $this->proposal->id,
             'link' => route('proposal.view', $this->proposal->id),
         ];

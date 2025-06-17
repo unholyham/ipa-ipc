@@ -2,26 +2,26 @@
 
 namespace App\Mail;
 
+use App\Models\Account;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\User;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class AccountApprovedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    public $account;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user)
+    public function __construct(Account $account)
     {
-        $this->user = $user;
+        $this->account = $account;
     }
 
     /**
@@ -30,7 +30,7 @@ class AccountApprovedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Account registration for ' .$this->user->name . ' Has Been Approved',
+            subject: 'Account registration for ' .$this->account->employeeName . ' Has Been Approved',
         );
     }
 
@@ -42,7 +42,7 @@ class AccountApprovedMail extends Mailable
         return new Content(
             markdown: 'emails.account-approved',
             with: [
-                'user' => $this->user,
+                'account' => $this->account,
             ]
         );
     }

@@ -15,10 +15,6 @@ class NotificationController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getUnreadNotifications(Request $request){
-        if (!Auth::check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-        
         $unreadNotifications = Auth::user()->unreadNotifications;
 
         return response()->json($unreadNotifications);
@@ -32,10 +28,6 @@ class NotificationController extends Controller
      */
 
      public function markAllAsRead(Request $request){
-        if (!Auth::check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
         Auth::user()->unreadNotifications->markAsRead();
 
         return response()->json(['message' => 'All notifications marked as read.']);
@@ -43,8 +35,6 @@ class NotificationController extends Controller
 
      public function markSingleAsRead(DatabaseNotification $notification)
     {
-        // SECURITY CHECK: Ensure the notification belongs to the authenticated user.
-        // This prevents users from marking other users' notifications as read.
         if (Auth::id() !== $notification->notifiable_id) {
             return response()->json(['message' => 'Unauthorized to mark this notification as read.'], 403);
         }

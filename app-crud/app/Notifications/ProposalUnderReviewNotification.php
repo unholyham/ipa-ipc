@@ -39,7 +39,7 @@ class ProposalUnderReviewNotification extends Notification
     {
         return [
             'title' => 'Proposal Under Review',
-            'message' => 'Your proposal <strong>"' . $this->proposal->projectTitle . '"</strong> is now under review.',
+            'message' => 'Your proposal <strong>"' . $this->proposal->getProject->projectTitle . '"</strong> is now under review.',
             'proposal_id' => $this->proposal->id,
             'link' => route('proposal.view', $this->proposal->id),
         ];
