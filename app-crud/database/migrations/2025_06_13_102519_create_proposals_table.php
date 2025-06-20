@@ -17,8 +17,9 @@ return new class extends Migration
             $table->uuid('project');
             $table->string('region');
             $table->string('preparedBy');
-            $table->uuid('mainContractor');
+            // $table->uuid('mainContractor');
             $table->string('reviewStatus')->nullable();
+            $table->string('checkedStatus')->nullable();
             $table->string('approvedStatus')->nullable();
             $table->string('remarks')->nullable();
             $table->string('pathToTP')->nullable();
@@ -27,7 +28,7 @@ return new class extends Migration
 
             $table->foreign('ownerID')->references('accountID')->on('accounts')->onDelete('cascade');
             $table->foreign('project')->references('projectID')->on('projects')->onDelete('cascade');
-            $table->foreign('mainContractor')->references('companyID')->on('companies')->onDelete('cascade');
+            // $table->foreign('mainContractor')->references('companyID')->on('companies')->onDelete('cascade');
         });
     }
 
@@ -40,14 +41,14 @@ return new class extends Migration
             //Drop Foreign Keys
             $table->dropForeign(['ownerID']); 
             $table->dropForeign(['project']);
-            $table->dropForeign(['mainContractor']);
+            // $table->dropForeign(['mainContractor']);
             
             
 
             //Drop Columns
             $table->dropColumn('ownerID');
             $table->dropColumn('project');
-            $table->dropColumn('mainContractor');
+            // $table->dropColumn('mainContractor');
         });
         Schema::dropIfExists('proposals');
     }

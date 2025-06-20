@@ -40,7 +40,7 @@ class AccountSeeder extends Seeder
 
         Account::create([
             'employeeName' => 'Admin',
-            'designation' => 'System Administrator',
+            'designation' => 'Administrator',
             'email' => 'admin@email.com',
             'password' => '1234',
             'contactNumber' => '',
@@ -62,13 +62,13 @@ class AccountSeeder extends Seeder
             'verificationRejectRemarks' => null,
             'accountStatus' => 'active',
             'roleID' => $userRole->roleID,
-            'companyID' => $shorefield->companyID,
+            'companyID' => $shorecomm->companyID,
             'email_verified_at' => now(),
         ]);
 
         Account::create([
             'employeeName' => 'Dave',
-            'designation' => 'Contract Executive',
+            'designation' => 'Assistant Contract Manager',
             'email' => 'dave@email.com',
             'password' => '1234',
             'contactNumber' => '123456789',
@@ -82,15 +82,15 @@ class AccountSeeder extends Seeder
 
         Account::create([
             'employeeName' => 'John',
-            'designation' => 'Contract Executive',
+            'designation' => 'Contract Manager',
             'email' => 'john@email.com',
             'password' => '1234',
             'contactNumber' => '123456789',
-            'verificationStatus' => 'pending',
+            'verificationStatus' => 'verified',
             'verificationRejectRemarks' => null,
-            'accountStatus' => 'inactive',
+            'accountStatus' => 'active',
             'roleID' => $userRole->roleID,
-            'companyID' => $kurw->companyID,
+            'companyID' => $shorecomm->companyID,
             'email_verified_at' => now(),
         ]);
 

@@ -28,15 +28,6 @@ class ProposalSeeder extends Seeder
         }
 
         try {
-            $shorefield = Company::where('companyName', 'Shorefield Sdn Bhd')->firstOrFail();
-            $shorecomm = Company::where('companyName', 'Shorefield Communications Sdn Bhd')->firstOrFail();
-            $kurw = Company::where('companyName', 'Konsortium URW Sdn Bhd')->firstOrFail();
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            Log::error('Company not found during ProposalSeeder.', ['error' => $e->getMessage()]);
-            return;
-        }
-
-        try {
             $medongproject = Project::where('projectTitle', 'Medong Bridge Project')->firstOrFail();
             $bmeproject = Project::where('projectTitle', 'BME Brandah Road Project')->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -49,8 +40,9 @@ class ProposalSeeder extends Seeder
             'project' => $medongproject->projectID,
             'region' => 'Sarawak',
             'preparedBy' => 'Employee 1',
-            'mainContractor' => $shorefield->companyID,
+            // 'mainContractor' => $shorefield->companyID,
             'reviewStatus' => 'Not Started',
+            'checkedStatus' => 'Not Started',
             'approvedStatus' => 'Not Started',
             'remarks' => null,
             'pathToTP' => null,
@@ -62,8 +54,9 @@ class ProposalSeeder extends Seeder
             'project' => $bmeproject->projectID,
             'region' => 'Sarawak',
             'preparedBy' => 'Employee 2',
-            'mainContractor' => $kurw->companyID,
+            // 'mainContractor' => $kurw->companyID,
             'reviewStatus' => 'Not Started',
+            'checkedStatus' => 'Not Started',
             'approvedStatus' => 'Not Started',
             'remarks' => null,
             'pathToTP' => null,

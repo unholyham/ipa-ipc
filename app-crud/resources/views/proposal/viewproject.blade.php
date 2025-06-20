@@ -13,11 +13,15 @@
 
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
     <!--Include Navbar Based on Role-->
-    @if (Auth::user()->role->roleName === 'admin')
-        @include('partials.adminnav')
-    @else
-        @include('partials.usernav')
-    @endif
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
+  @else
+    @include('partials.adminnav')
+  @endif
     <!--End of Include-->
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -44,7 +48,7 @@
                 <h6>{{ $project->projectNumber }}</h6>
             </div>
         </div>
-        <div class="row bg-light border p-1">
+        <div class="row bg-light border-top border-start border-end p-1">
             <div class="col-md-3">
                 <h6 class="subject">Sub Contractor</h6>
             </div>
@@ -52,8 +56,15 @@
                 <h6><a href="{{route('company.view', ['company' => $project->subContractorCompany])}}" class="viewCompanyLink">{{ $project->subContractorCompany->companyName }}</a></h6>
             </div>
         </div>
+        <div class="row border p-1">
+            <div class="col-md-3">
+                <h6 class="subject">Main Contractor</h6>
+            </div>
+            <div class="col-md-3">
+                <h6><a href="{{route('company.view', ['company' => $project->mainContractorCompany])}}" class="viewCompanyLink">{{ $project->mainContractorCompany->companyName }}</a></h6>
+            </div>
+        </div>
 
-        <h2 class="text-center mt-5">Proposals</h2>
         @if ($project->proposals->isEmpty())
             <p class="text-center">No proposals linked to this project yet.</p>
         @else
@@ -70,8 +81,8 @@
                                 <th class="tableheader text-bg-dark">Region</th>
                                 <th class="tableheader text-bg-dark">Prepared By</th>
                                 <th class="tableheader text-bg-dark">Review Status</th>
+                                <th class="tableheader text-bg-dark">Checked Status</th>
                                 <th class="tableheader text-bg-dark">Approved Status</th>
-                                <th class="tableheader text-bg-dark">Remarks</th>
                             </tr>
                         </thead>
                         @foreach ($project->proposals as $proposal)
@@ -89,11 +100,15 @@
                                         </span>
                                     </td>
                                     <td>
+                                        <span class="badge rounded-pill {{ $proposal->checkedStatus == 'Approved' ? 'text-bg-success' : ($proposal->checkedStatus == 'Rejected' ? 'text-bg-danger' : 'text-bg-warning') }}">
+                                            {{ $proposal->checkedStatus }}
+                                        </span>
+                                    </td>
+                                    <td>
                                         <span class="badge rounded-pill {{ $proposal->approvedStatus == 'Approved' ? 'text-bg-success' : ($proposal->approvedStatus == 'Rejected' ? 'text-bg-danger' : 'text-bg-warning') }}">
                                             {{ $proposal->approvedStatus }}
                                         </span>
                                     </td>
-                                    <td>{{ $proposal->remarks }}</td>
                                 </tr>
                         @endforeach
                     </table>
@@ -102,11 +117,6 @@
         </div>
         @endif
     </div>
-    
-    
-
-    
-
     
     <!--Include Footer-->
     @include('partials.footer')

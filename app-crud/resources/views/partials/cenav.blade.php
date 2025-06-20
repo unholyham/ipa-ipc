@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <div class="d-flex align-items-center">
-                <a class="navbar-brand" href="{{ route('proposal.index') }}">
+                <a class="navbar-brand" href="{{ route('project.index') }}">
                     <img src="/images/SSB_Logo.jpg" alt="SSB" height="45">
                 </a>
             </div>
@@ -13,8 +13,8 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {{ Route::currentRouteNamed('proposal.index') ? 'active' : '' }}"
-                            href="{{ route('proposal.index') }}">HOME</a>
+                        <a class="nav-link {{ Route::currentRouteNamed('project.index') ? 'active' : '' }}"
+                            href="{{ route('project.index') }}">HOME</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ Route::currentRouteNamed(['company.register','project.create','proposal.create']) ? 'active' : '' }}"
@@ -23,20 +23,19 @@
                             CREATE
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                            <li><a class="dropdown-item" href="{{ route('company.register') }}">CREATE COMPANY</a></li>
+                            <li><a class="dropdown-item" href="{{ route('company.register') }}">CREATE SUB CONTRACTOR</a></li>
                             <li><a class="dropdown-item" href="{{ route('project.create') }}">CREATE PROJECT</a></li>
                             <li><a class="dropdown-item" href="{{ route('proposal.create') }}">CREATE IPA</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ Route::currentRouteNamed(['company.index','project.index','proposal.index']) ? 'active' : '' }}"
+                        <a class="nav-link dropdown-toggle {{ Route::currentRouteNamed(['company.index','proposal.index']) ? 'active' : '' }}"
                             href="#" id="actionDropdown" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             MANAGE
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="actionDropdown">
                             <li><a class="dropdown-item" href="{{ route('company.index') }}">MANAGE COMPANIES</a></li>
-                            <li><a class="dropdown-item" href="{{ route('project.index') }}">MANAGE PROJECTS</a></li>
                             <li><a class="dropdown-item" href="{{ route('proposal.index') }}">MANAGE IPAS</a></li>
                         </ul>
                     </li>

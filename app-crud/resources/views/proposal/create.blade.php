@@ -13,11 +13,15 @@
 
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
     <!--Include Navbar Based on Role-->
-    @if (Auth::user()->role->roleName === 'admin')
-        @include('partials.adminnav')
-    @else
-        @include('partials.usernav')
-    @endif
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
+  @else
+    @include('partials.adminnav')
+  @endif
     <!--End of Include-->
     <div class="container pt-2 flex-grow-1">
         <h1 class="text-center">Interim Payment Application Form</h1>
@@ -97,7 +101,7 @@
                         </span>
                     @enderror
                 </div>
-                <div class="form-floating mb-3">
+                {{-- <div class="form-floating mb-3">
                     <select class="form-select @error('mainContractor') is-invalid @enderror" id="mainContractor" name="mainContractor">
                         <option value="" disabled selected>Select your Main Contractor</option>
                             @foreach($companies->sortBy('companyName') as $company)
@@ -114,7 +118,7 @@
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
-                </div>
+                </div> --}}
                 <div>
                     <label for="#tpLabel">Technical Proposal Document*</label>
                     <input type="file" class="form-control" name="pathToTP" id="tpLabel">

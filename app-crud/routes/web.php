@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/proposal/{proposal}/download-JMS', [ProposalController::class, 'downloadJMS'])->name('proposal.downloadJMS');
     Route::get('/proposal/{proposal}/display-JMS', [ProposalController::class, 'displayJMS'])->name('proposal.displayJMS');
     Route::patch('/proposal/{proposal}/review-status', [ProposalController::class, 'updateReviewStatus'])->name('proposal.updateReviewStatus');
+    Route::patch('/proposal/{proposal}/check-status', [ProposalController::class, 'updateCheckedStatus'])->name('proposal.updateCheckedStatus');
     Route::patch('/proposal/{proposal}/approve-status', [ProposalController::class, 'updateApprovedStatus'])->name('proposal.updateApprovedStatus');
     
     //Company Controller

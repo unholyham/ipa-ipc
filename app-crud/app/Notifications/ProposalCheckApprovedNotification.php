@@ -4,10 +4,10 @@ namespace App\Notifications;
 
 use App\Models\Proposal;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ProposalApprovedNotification extends Notification
+class ProposalCheckApprovedNotification extends Notification
 {
     use Queueable;
 
@@ -31,7 +31,6 @@ class ProposalApprovedNotification extends Notification
         return ['database'];
     }
 
-
     /**
      * Get the array representation of the notification.
      *
@@ -40,8 +39,8 @@ class ProposalApprovedNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'Proposal Approved!',
-            'message' => 'Your proposal <strong>"' . $this->proposal->getProject->projectTitle . '"</strong> has been approved!',
+            'title' => 'Proposal Checked!',
+            'message' => 'Your proposal <strong>"' . $this->proposal->getProject->projectTitle . '"</strong> was checked and approved!',
             'proposal_id' => $this->proposal->id,
             'link' => route('proposal.view', $this->proposal->id),
         ];

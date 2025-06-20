@@ -11,11 +11,15 @@
 
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
     <!--Include Navbar Based on Role-->
-    @if (Auth::user()->role->roleName === 'admin')
-        @include('partials.adminnav')
-    @else
-        @include('partials.usernav')
-    @endif
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
+  @else
+    @include('partials.adminnav')
+  @endif
     <!--End of Include-->
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -58,14 +62,25 @@
                 <h6>{{ $proposal->preparedBy }}</h6>
             </div>
         </div>
+
+        <div class="row bg-light border-top border-start border-end p-1">
+            <div class="col-md-3">
+                <h6 class="subject">Sub Contractor</h6>
+            </div>
+            <div class="col-md-3">
+                <h6><a href="{{route('company.view', ['company' => $proposal->getProject->subContractorCompany])}}" class="viewCompanyLink">{{ $proposal->getProject->subContractorCompany->companyName }}</a></h6>
+            </div>
+        </div>
+
         <div class="row bg-light border-top border-start border-end p-1">
             <div class="col-md-3">
                 <h6 class="subject">Main Contractor</h6>
             </div>
             <div class="col-md-3">
-                <h6><a href="{{route('company.view', ['company' => $proposal->company])}}" class="viewCompanyLink">{{ $proposal->company->companyName }}</a></h6>
+                <h6><a href="{{route('company.view', ['company' => $proposal->getProject->mainContractorCompany])}}" class="viewCompanyLink">{{ $proposal->getProject->mainContractorCompany->companyName }}</a></h6>
             </div>
         </div>
+
         <div class="row border-top border-start border-end p-1">
             <div class="col-md-3">
                 <h6 class="subject">Review Status</h6>
@@ -76,7 +91,7 @@
                         {{ $proposal->reviewStatus }}
                     </span>
                 </h6>
-                @if (Auth::user()->role->roleName === 'admin' && $proposal->reviewStatus === 'Not Started')
+                @if (Auth::user()->designation === 'Assistant Contract Manager' && $proposal->reviewStatus === 'Not Started')
                     <button type="button" class="btn btn-sm btn-success text-white" data-bs-toggle="modal"
                         data-bs-target="#confirmReviewModal">
                         Start Review
@@ -90,7 +105,49 @@
                 @endif
             </div>
         </div>
+
         <div class="row bg-light border-top border-start border-end p-1">
+            <div class="col-md-3">
+                <h6 class="subject">Checked Status</h6>
+            </div>
+            <div class="col-md-3">
+                <h6>
+                    <span
+                        class="badge rounded-pill {{ $proposal->checkedStatus == 'Approved' ? 'text-bg-success' : ($proposal->checkedStatus == 'Rejected' ? 'text-bg-danger' : 'text-bg-warning') }}">
+                        {{ $proposal->checkedStatus }}
+                    </span>
+                </h6>
+                {{--  Conditional buttons for Checked Status --}}
+                @if (Auth::user()->designation === 'Assistant Contract Manager' &&
+                        $proposal->reviewStatus === 'Under Review' &&
+                        $proposal->checkedStatus == 'Not Started')
+                    <button type="button" class="btn btn-sm btn-success text-white" data-bs-toggle="modal"
+                        data-bs-target="#confirmCheckedApproveModal">
+                        Approve
+                    </button>
+                    <form id="updateCheckedStatusForm"
+                        action="{{ route('proposal.updateCheckedStatus', $proposal->id) }}" method="POST"
+                        style="display: none;">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="checkedStatus" value="Approved">
+                    </form>
+                    <button type="button" class="btn btn-sm btn-danger text-white" data-bs-toggle="modal"
+                        data-bs-target="#confirmRejectModal">
+                        Reject
+                    </button>
+                    <form id="updateRejectedStatusForm"
+                        action="{{ route('proposal.updateCheckedStatus', $proposal->id) }}" method="POST"
+                        style="display: none;">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="checkedStatus" value="Rejected">
+                    </form>
+                @endif
+            </div>
+        </div>
+
+        <div class="row border-top border-start border-end p-1">
             <div class="col-md-3">
                 <h6 class="subject">Approved Status</h6>
             </div>
@@ -102,9 +159,9 @@
                     </span>
                 </h6>
                 {{--  Conditional buttons for Approve Status --}}
-                @if (Auth::user()->role->roleName === 'admin' &&
-                        $proposal->reviewStatus === 'Under Review' &&
-                        $proposal->approvedStatus !== 'Approved')
+                @if (Auth::user()->designation === 'Contract Manager' &&
+                        $proposal->checkedStatus === 'Approved' &&
+                        $proposal->approvedStatus === 'Not Started')
                     <button type="button" class="btn btn-sm btn-success text-white" data-bs-toggle="modal"
                         data-bs-target="#confirmApproveModal">
                         Approve
@@ -130,7 +187,9 @@
                 @endif
             </div>
         </div>
-        @if ($proposal->approvedStatus === 'Rejected')
+
+        {{-- Remarks will only appear if approveStatus or checkedStatus is Rejected --}}
+        @if ($proposal->approvedStatus === 'Rejected' || $proposal->checkedStatus === 'Rejected')
             <div class="row border-top border-start border-end p-1">
                 <div class="col-md-3">
                     <h6 class="subject">Remarks</h6>
@@ -140,6 +199,7 @@
                 </div>
             </div>
         @endif
+
         <div class="row border-top border-start border-end p-1">
             <div class="col-md-3">
                 <h6 class="subject">Technical Proposal</h6>
@@ -155,6 +215,7 @@
                 @endif
             </div>
         </div>
+
         <div class="row bg-light border p-1">
             <div class="col-md-3">
                 <h6 class="subject">Joint Measurement Sheet</h6>
@@ -171,6 +232,8 @@
             </div>
         </div>
     </div>
+
+    {{-- Review Status Modal Start --}}
     <div class="modal fade" id="confirmReviewModal" tabindex="-1" aria-labelledby="confirmReviewModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -192,6 +255,33 @@
             </div>
         </div>
     </div>
+    {{-- Review Status Modal End --}}
+
+    {{-- Checked Status Modal Start --}}
+    <div class="modal fade" id="confirmCheckedApproveModal" tabindex="-1"
+    aria-labelledby="confirmCheckedApproveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmCheckedApproveModalLabel">Confirm Check Approval</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to mark this technical proposal as "<strong>Approved</strong>" (checked)?
+                <br><br>
+                This action will enable the final approval process.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="submitApproveCheckedStatus()"
+                    data-bs-dismiss="modal">Agree</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    {{-- Checked Status Modal End --}}
+
+    {{-- Approved Status Modal Start --}}
     <div class="modal fade" id="confirmApproveModal" tabindex="-1" aria-labelledby="confirmApproveModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -213,6 +303,9 @@
             </div>
         </div>
     </div>
+    {{-- Approved Status Modal End --}}
+
+    {{-- Reject Modal Start --}}
     <div class="modal fade" id="confirmRejectModal" tabindex="-1" aria-labelledby="confirmRejectModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -241,6 +334,9 @@
             </div>
         </div>
     </div>
+    {{-- Reject Modal End --}}
+
+    {{-- Technical Proposal PDF Viewer Modal Start --}}
     <div class="modal fade" id="tpViewModal-{{ $proposal->id }}" tabindex="-1"
         aria-labelledby="tpViewModalLabel-{{ $proposal->id }}" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
@@ -264,6 +360,9 @@
             </div>
         </div>
     </div>
+    {{-- Technical Proposal PDF Viewer Modal End --}}
+
+    {{-- Joint Measurement Sheet PDF Viewer Modal Start --}}
     <div class="modal fade" id="jmsViewModal-{{ $proposal->id }}" tabindex="-1"
         aria-labelledby="jmsViewModalLabel-{{ $proposal->id }}" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
@@ -287,11 +386,17 @@
             </div>
         </div>
     </div>
+    {{-- Joint Measurement Sheet PDF Viewer Modal End --}}
+
     @include('partials.footer')
     @include('partials.bodycdn')
     <script>
         function submitReviewStatus() {
             document.getElementById('updateReviewStatusForm').submit();
+        }
+
+        function submitApproveCheckedStatus() {
+            document.getElementById('updateCheckedStatusForm').submit();
         }
 
         function submitApproveStatus() {

@@ -34,7 +34,7 @@ class AuthController extends Controller
             if ($user->verificationStatus === 'verified') {
                 if ($user->accountStatus === 'active') {
                     $request->session()->regenerate();
-                    return redirect()->route('proposal.index');
+                    return redirect()->route('project.index');
                 } else {
                     Auth::logout();
                     $request->session()->invalidate();

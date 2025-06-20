@@ -22,8 +22,8 @@ class Proposal extends Model
         'project',
         'region',
         'preparedBy',
-        'mainContractor',
         'reviewStatus',
+        'checkedStatus',
         'approvedStatus',
         'remarks',
         'pathToTP',
@@ -46,9 +46,5 @@ class Proposal extends Model
 
     public function getProject() {
         return $this->belongsTo(Project::class, 'project', 'projectID');
-    }
-
-    public function company() {
-        return $this->belongsTo(Company::class, 'mainContractor', 'companyID');
     }
 }

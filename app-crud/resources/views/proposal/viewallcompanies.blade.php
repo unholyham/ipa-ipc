@@ -11,10 +11,14 @@
 </head>
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
   <!--Include Navbar Based on Role-->
-  @if(Auth::user()->role->roleName === 'admin')
-    @include('partials.adminnav')
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
   @else
-    @include('partials.usernav')
+    @include('partials.adminnav')
   @endif
   <!--End of Include-->
   @if (session('success'))

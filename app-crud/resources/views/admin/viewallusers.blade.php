@@ -10,11 +10,15 @@
     <link rel="stylesheet" href="/styles/style.css">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
-  <!--Include Navbar Based on Role-->
-  @if(Auth::user()->role->roleName === 'admin')
-    @include('partials.adminnav')
+  <!--Include Navbar Based on Designation-->
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
   @else
-    @include('partials.usernav')
+    @include('partials.adminnav')
   @endif
   <!--End of Include-->
   @if (session('success'))
@@ -37,7 +41,7 @@
             <th class="tableheader text-bg-warning">Name</th>
             <th class="tableheader text-bg-warning">Created On</th>
             <th class="tableheader text-bg-warning">Email</th>
-            <th class="tableheader text-bg-warning">Role</th>
+            <th class="tableheader text-bg-warning">Designation</th>
             <th class="tableheader text-bg-warning">Verification Status</th>
             </tr>
           </thead>
@@ -47,8 +51,8 @@
                 <td><a href="{{route('admin.users.view', ['account' => $account])}}" class="viewUserLink"><strong>{{$account->employeeName}}</strong></a></td>
                 <td>{{$account->created_at->format('j F Y g:i a') }}</td>
                 <td>{{$account->email}}</td>
-                <td>{{$account->role->roleName}}</td>
-                <td>{{$account->verificationStatus}}</td>
+                <td>{{$account->designation}}</td>
+                <td><span class="badge rounded-pill text-bg-warning">{{$account->verificationStatus}}</span></td>
             </tr>
         @endif
         @endforeach
@@ -69,8 +73,8 @@
             <th class="tableheader text-bg-success">Name</th>
             <th class="tableheader text-bg-success">Created On</th>
             <th class="tableheader text-bg-success">Email</th>
-            <th class="tableheader text-bg-success">Role</th>
-            <th class="tableheader text-bg-success">Verification Status</th>
+            <th class="tableheader text-bg-success">Designation</th>
+            <th class="tableheader text-bg-success">Active Status</th>
             </tr>
           </thead>
           @foreach($accounts as $account)
@@ -79,8 +83,12 @@
                 <td><a href="{{route('admin.users.view', ['account' => $account])}}" class="viewUserLink"><strong>{{$account->employeeName}}</strong></a></td>
                 <td>{{$account->created_at->format('j F Y g:i a') }}</td>
                 <td>{{$account->email}}</td>
-                <td>{{$account->role->roleName}}</td>
-                <td>{{$account->verificationStatus}}</td>
+                <td>{{$account->designation}}</td>
+                <td>
+                  <span class="badge rounded-pill {{ $account->accountStatus == 'inactive' ? 'text-bg-danger' : 'text-bg-success' }}">
+                    {{ $account->accountStatus }}
+                  </span>
+                </td>
             </tr>
         @endif
         @endforeach
@@ -101,8 +109,7 @@
             <th class="tableheader text-bg-danger">Name</th>
             <th class="tableheader text-bg-danger">Created On</th>
             <th class="tableheader text-bg-danger">Email</th>
-            <th class="tableheader text-bg-danger">Role</th>
-            <th class="tableheader text-bg-danger">Verification Status</th>
+            <th class="tableheader text-bg-danger">Designation</th>
             <th class="tableheader text-bg-danger">Remarks</th>
             </tr>
           </thead>
@@ -112,9 +119,8 @@
                 <td><a href="{{route('admin.users.view', ['account' => $account])}}" class="viewUserLink"><strong>{{$account->employeeName}}</strong></a></td>
                 <td>{{$account->created_at->format('j F Y g:i a') }}</td>
                 <td>{{$account->email}}</td>
-                <td>{{$account->role->roleName}}</td>
-                <td>{{$account->verificationStatus}}</td>
-                <td>{{$account->remarks}}</td>
+                <td>{{$account->designation}}</td>
+                <td>{{$account->verificationRejectRemarks}}</td>
             </tr>
         @endif
         @endforeach

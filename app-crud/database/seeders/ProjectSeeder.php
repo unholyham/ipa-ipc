@@ -17,6 +17,9 @@ class ProjectSeeder extends Seeder
         try {
             $medong = Company::where('companyName', 'Medong Synergy')->firstOrFail();
             $bme = Company::where('companyName', 'BME Brandah')->firstOrFail();
+            $shorefield = Company::where('companyName', 'Shorefield Sdn Bhd')->firstOrFail();
+            $shorecomm = Company::where('companyName', 'Shorefield Communications Sdn Bhd')->firstOrFail();
+            $kurw = Company::where('companyName', 'Konsortium URW Sdn Bhd')->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error('Company not found during ProjectSeeder.', ['error' => $e->getMessage()]);
             return;
@@ -25,12 +28,14 @@ class ProjectSeeder extends Seeder
         Project::create([
             'projectTitle' => 'Medong Bridge Project',
             'projectNumber' => 'MD2025041',
-            'subContractor' => $medong->companyID
+            'subContractor' => $medong->companyID,
+            'mainContractor' => $shorefield->companyID
         ]);
         Project::create([
             'projectTitle' => 'BME Brandah Road Project',
             'projectNumber' => 'BME2025041',
-            'subContractor' => $bme->companyID
+            'subContractor' => $bme->companyID,
+            'mainContractor' => $shorecomm->companyID
         ]);
 
     }

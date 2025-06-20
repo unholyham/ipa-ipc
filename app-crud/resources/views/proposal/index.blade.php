@@ -13,11 +13,15 @@
 
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
     <!--Include Navbar Based on Role-->
-    @if (Auth::user()->role->roleName === 'admin')
-        @include('partials.adminnav')
-    @else
-        @include('partials.usernav')
-    @endif
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
+  @else
+    @include('partials.adminnav')
+  @endif
     <!--End of Include-->
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -40,13 +44,14 @@
                                 <th class="tableheader text-bg-warning">Project Number</th>
                                 <th class="tableheader text-bg-warning">Region</th>
                                 <th class="tableheader text-bg-warning">Prepared By</th>
-                                <th class="tableheader text-bg-warning">Main Contractor</th>
+                                <th class="tableheader text-bg-warning">Sub Contractor</th>
                                 <th class="tableheader text-bg-warning">Review Status</th>
+                                <th class="tableheader text-bg-warning">Checked Status</th>
                                 <th class="tableheader text-bg-warning">Approved Status</th>
                             </tr>
                         </thead>
                         @foreach ($proposals as $proposal)
-                            @if ($proposal->reviewStatus == 'Not Started' || $proposal->reviewStatus == 'Under Review')
+                            @if ($proposal->approvedStatus != 'Approved' && $proposal->approvedStatus != 'Rejected' && $proposal->checkedStatus != 'Rejected')
                                 <tr>
                                     <td><a href="{{ route('proposal.view', ['proposal' => $proposal]) }}"
                                             class="editProposalLink"><strong>{{ $proposal->getProject->projectTitle }}</strong></a>
@@ -55,8 +60,9 @@
                                     <td>{{ $proposal->getProject->projectNumber }}</td>
                                     <td>{{ $proposal->region }}</td>
                                     <td>{{ $proposal->preparedBy }}</td>
-                                    <td>{{ $proposal->company->companyName }}</td>
-                                    <td><span class="badge rounded-pill {{ $proposal->reviewStatus == 'Not Started' ? 'text-bg-warning' : 'text-bg-info' }}">{{ $proposal->reviewStatus }}</span></td>
+                                    <td>{{ $proposal->getProject->subContractorCompany->companyName }}</td>
+                                    <td><span class="badge rounded-pill {{$proposal->reviewStatus == 'Reviewed' ? 'text-bg-success' : ($proposal->reviewStatus == 'Under Review' ? 'text-bg-info' : 'text-bg-warning')}}">{{ $proposal->reviewStatus }}</span></td>
+                                    <td><span class="badge rounded-pill {{ $proposal->checkedStatus == 'Not Started' ? 'text-bg-warning' : 'text-bg-success' }}">{{ $proposal->checkedStatus }}</td>
                                     <td><span class="badge rounded-pill text-bg-warning">{{ $proposal->approvedStatus }}</td>
                                 </tr>
                             @endif
@@ -79,8 +85,9 @@
                                 <th class="tableheader text-bg-success">Project Number</th>
                                 <th class="tableheader text-bg-success">Region</th>
                                 <th class="tableheader text-bg-success">Prepared By</th>
-                                <th class="tableheader text-bg-success">Main Contractor</th>
+                                <th class="tableheader text-bg-success">Sub Contractor</th>
                                 <th class="tableheader text-bg-success">Review Status</th>
+                                <th class="tableheader text-bg-success">Checked Status</th>
                                 <th class="tableheader text-bg-success">Approved Status</th>
                             </tr>
                         </thead>
@@ -94,8 +101,9 @@
                                     <td>{{ $proposal->getProject->projectNumber }}</td>
                                     <td>{{ $proposal->region }}</td>
                                     <td>{{ $proposal->preparedBy }}</td>
-                                    <td>{{ $proposal->company->companyName }}</td>
+                                    <td>{{ $proposal->getProject->subContractorCompany->companyName }}</td>
                                     <td><span class="badge rounded-pill text-bg-success">{{ $proposal->reviewStatus }}</span></td>
+                                    <td><span class="badge rounded-pill text-bg-success">{{ $proposal->checkedStatus }}</span></td>
                                     <td><span class="badge rounded-pill text-bg-success">{{ $proposal->approvedStatus }}</span></td>
                                     
                                 </tr>
@@ -119,12 +127,12 @@
                                 <th class="tableheader text-bg-danger">Project Number</th>
                                 <th class="tableheader text-bg-danger">Region</th>
                                 <th class="tableheader text-bg-danger">Prepared By</th>
-                                <th class="tableheader text-bg-danger">Main Contractor</th>
+                                <th class="tableheader text-bg-danger">Sub Contractor</th>
                                 <th class="tableheader text-bg-danger">Remarks</th>
                             </tr>
                         </thead>
                         @foreach ($proposals as $proposal)
-                            @if ($proposal->approvedStatus == 'Rejected')
+                            @if ($proposal->checkedStatus == 'Rejected' || $proposal->approvedStatus == 'Rejected')
                                 <tr>
                                     <td><a href="{{ route('proposal.view', ['proposal' => $proposal]) }}"
                                             class="editProposalLink"><strong>{{ $proposal->getProject->projectTitle }}</strong></a>
@@ -133,7 +141,7 @@
                                     <td>{{ $proposal->getProject->projectNumber }}</td>
                                     <td>{{ $proposal->region }}</td>
                                     <td>{{ $proposal->preparedBy }}</td>
-                                    <td>{{ $proposal->company->companyName }}</td>
+                                    <td>{{ $proposal->getProject->subContractorCompany->companyName }}</td>
                                     <td>{{ $proposal->remarks }}</td>
                                 </tr>
                             @endif

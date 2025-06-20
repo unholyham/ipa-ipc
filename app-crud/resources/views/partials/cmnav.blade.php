@@ -1,5 +1,5 @@
 <div class="sticky-top">
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <div class="d-flex align-items-center">
                 <a class="navbar-brand" href="{{ route('project.index') }}">
@@ -28,13 +28,13 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.users*') ? 'active' : '' }}"
-                            href="{{ route('admin.users') }}">ACCOUNTS</a>
+                        <a class="nav-link" href="#">CONTACT US</a> {{-- Add active class logic if this route exists --}}
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
     <div class="container-fluid">
         <!--Toolbar Nav-->
         <div class="row justify-content-between align-items-center bg-gradient" id="toolbar_nav">
@@ -46,9 +46,9 @@
                 <div class="row">
                     <div class="col p-0">
                         <div class="dropdown">
-                            <button type="button" class="btn btn-info nav_icon position-relative"
-                                style="font-size:15px;" id="notificationsDropdownToggle" data-bs-toggle="dropdown"
-                                aria-expanded="false"><i class="bi bi-bell-fill"></i>
+                            <button type="button" class="btn btn-info nav_icon" style="font-size:15px;"
+                                id="notificationsDropdownToggle" data-bs-toggle="dropdown" aria-expanded="false"><i
+                                    class="bi bi-bell-fill"></i>
                                 <span
                                     class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-danger"
                                     id="unread-notifications-count" style="display: none;">

@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('projectTitle')->unique();
             $table->string('projectNumber')->unique();
             $table->uuid('subContractor');
+            $table->uuid('mainContractor');
             $table->timestamps();
 
             $table->foreign('subContractor')->references('companyID')->on('companies')->onDelete('cascade');
+            $table->foreign('mainContractor')->references('companyID')->on('companies')->onDelete('cascade');
         });
     }
 
@@ -29,9 +31,11 @@ return new class extends Migration
     {
         //Drop Foreign Key
         $table->dropForeign(['subContractor']); 
+        $table->dropForeign(['mainContractor']);
 
         //Drop Column
         $table->dropColumn('subContractor');
+        $table->dropColumn('mainContractor');
         Schema::dropIfExists('projects');
     }
 };

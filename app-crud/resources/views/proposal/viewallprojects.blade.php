@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Projects</title>
+    <title>Projects</title>
     <!--Include Head CDN-->
     @include('partials.headcdn')
     <!--End of Head CDN-->
@@ -11,10 +11,14 @@
 </head>
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
   <!--Include Navbar Based on Role-->
-  @if(Auth::user()->role->roleName === 'admin')
-    @include('partials.adminnav')
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
   @else
-    @include('partials.usernav')
+    @include('partials.adminnav')
   @endif
   <!--End of Include-->
   @if (session('success'))
@@ -24,7 +28,7 @@
     </div>
   @endif
 <div class="container pt-2">
-  <h1 class="text-center">Manage Projects</h1>
+  <h1 class="text-center">Projects</h1>
 
   <!--Start of Projects Table-->
   <div class="row">
@@ -37,6 +41,7 @@
             <th class="tableheader text-bg-dark">Project Title</th>
             <th class="tableheader text-bg-dark">Project Number</th>
             <th class="tableheader text-bg-dark">Sub Contractor</th>
+            <th class="tableheader text-bg-dark">Main Contractor</th>
             </tr>
           </thead>
         @foreach($projects as $project)
@@ -44,6 +49,7 @@
                 <td><a href="{{route('project.view', ['project' => $project->projectID])}}" class="viewProjectLink"><strong>{{$project->projectTitle}}</strong></a></td>
                 <td>{{$project->projectNumber}}</td>
                 <td>{{$project->subContractorCompany->companyName}}</td>
+                <td>{{$project->mainContractorCompany->companyName}}</td>
             </tr>
         @endforeach
         </table>

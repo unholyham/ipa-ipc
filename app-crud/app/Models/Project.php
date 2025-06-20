@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-     protected $primaryKey = 'projectID';//Set $primaryKey manually if it isn't explicity 'id'
+    protected $primaryKey = 'projectID';//Set $primaryKey manually if it isn't explicity 'id'
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -17,6 +17,7 @@ class Project extends Model
         'projectTitle',
         'projectNumber',
         'subContractor',
+        'mainContractor',
     ];
 
     protected static function booted(): void
@@ -31,6 +32,11 @@ class Project extends Model
     public function subContractorCompany()
     {
         return $this->belongsTo(Company::class, 'subContractor', 'companyID');
+    }
+
+    public function mainContractorCompany()
+    {
+        return $this->belongsTo(Company::class, 'mainContractor', 'companyID');
     }
 
     public function proposals()

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interim Payment Application Form</title>
+    <title>Sub Contractor Registration Form</title>
     <!--Include Head CDN-->
     @include('partials.headcdn')
     <!--End of Head CDN-->
@@ -13,14 +13,18 @@
 
 <body class="d-flex flex-column min-vh-100 bg-white bg-gradient">
     <!--Include Navbar Based on Role-->
-    @if (Auth::user()->role->roleName === 'admin')
-        @include('partials.adminnav')
-    @else
-        @include('partials.usernav')
-    @endif
+  @if(Auth::user()->designation === 'Contract Executive')
+    @include('partials.cenav')
+  @elseif (Auth::user()->designation === 'Assistant Contract Manager')
+    @include('partials.acmnav')
+  @elseif (Auth::user()->designation === 'Contract Manager')
+    @include('partials.cmnav')
+  @else
+    @include('partials.adminnav')
+  @endif
     <!--End of Include-->
     <div class="container pt-2 flex-grow-1">
-        <h1 class="text-center">Company Registration Form</h1>
+        <h1 class="text-center">Sub Contractor Registration Form</h1>
         <div class="mt-4">
             <form method="post" action="{{ route('company.store') }}" enctype="multipart/form-data" id="companyForm">
                 @csrf
